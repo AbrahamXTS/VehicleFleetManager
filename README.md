@@ -1,43 +1,46 @@
-# VecinoVigilante - Crime Reporting Progressive Web Application
+# Administrador de la flotilla de vehículos empresariales
 
 ## Link to System Requirements
 
 You can find the system requirements/project tickets on our Jira board: [VecinoVigilante Jira Board](https://vecinosvigilantes.atlassian.net/jira/software/projects/VV/boards/2)
 
-## Description
+## For running on development:
 
-VecinoVigilante is a progressive web application designed to keep citizens informed about complaints made near their location. It provides the following features:
+- Recommended python version: 3.11
 
-- **Reporting Crimes:** Users can register locations where they have experienced or witnessed any crime.
-- **Crime Map:** The application generates and displays a crime map that reflects the most dangerous sectors of the city.
-- **Detailed Report Information:** Users can access detailed information on selected reports including description, type of crime, characteristics of suspects, date, and time.
-- **User Contributions:** Other users can contribute additional information or comments on registered crimes.
-- **Notification System:** Users receive notifications of new reports near their current location.
+1. Create enviroment:
 
-## Technologies Used
+```bash
+python -m venv env
+```
 
-- Frontend: Flutter
-- Backend: FastApi
-- Database: MongoDB
+2. Activate enviroment:
 
-## Commit Guidelines
-When making commits, please follow these guidelines:
+On Windows:
 
-- **Format**: Commits follow [conventional commit](https://www.conventionalcommits.org/en/v1.0.0/) conventions followed by a Ticket number.
-   For example if your ticket is TS123 then your commit would look like:
-   ```
-   feat: describe your changes (TS123)
-   ```
-   Allowed prefixes are:
-   - `feat`: for a new feature for the user.
-   - `fix`: for a bug fix for the user, not a fix to a build script.
-   - `chore`: Changes to t auxiliary tools and libraries such as documentation generation
-   - `ci`: Changes to CI/CD tools such as jenkins or github actions.
-   - `docs`: for changes to the documentation.
-   - `style`: for formatting changes, missing semicolons, etc (NOT CSS).
-   - `refactor`: for refactoring production code, e.g. renaming a variable.
-   - `perf`: for performance improvements.
-   - `test`: for adding missing tests, refactoring tests; no production code change.
-   - `build`: [RESERVED FOR RELEASES] for deploying new builds.
+```bash
+env\Scripts\activate
+```
 
-- **Atomic Commits:** Keep commits focused on a single logical change. Avoid bundling unrelated changes within a single commit.
+On Unix or MacOS:
+
+```bash
+source env/bin/activate
+```
+
+3. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Run the server
+
+```bash
+uvicorn app.main:app --reload
+```
+
+5. Check for API docs at:
+
+http://127.0.0.1:8000/docs
+
