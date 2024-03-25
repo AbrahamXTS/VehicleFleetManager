@@ -2,7 +2,7 @@
 
 ## Link to System Requirements
 
-You can find the system requirements/project tickets on our Jira board: [VecinoVigilante Jira Board](https://vecinosvigilantes.atlassian.net/jira/software/projects/VV/boards/2)
+You can find the system requirements/project tickets on our [Jira Board](https://vecinosvigilantes.atlassian.net/jira/software/projects/VV/boards/2)
 
 ## For running on development:
 
@@ -11,7 +11,7 @@ You can find the system requirements/project tickets on our Jira board: [VecinoV
 1. Create enviroment:
 
 ```bash
-python -m venv env
+python3 -m venv env
 ```
 
 2. Activate enviroment:
@@ -31,16 +31,22 @@ source env/bin/activate
 3. Install dependencies
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
-4. Run the server
+4. Do the database migration
+
+```bash
+python3 -m app.infrastructure.configs.migrate_database
+```
+
+5. Run the server
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-5. Check for API docs at:
+6. Check for API docs at:
 
 http://127.0.0.1:8000/docs
 
