@@ -2,7 +2,7 @@
 
 ## Link to System Requirements
 
-You can find the system requirements/project tickets on our [Jira Board](https://vecinosvigilantes.atlassian.net/jira/software/projects/VV/boards/2):
+You can find the system requirements/project tickets on our [Jira Board](https://vecinosvigilantes.atlassian.net/jira/software/projects/VV/boards/2)
 
 ## For running on development:
 
@@ -37,7 +37,7 @@ pip3 install -r requirements.txt
 4. Do the database migration
 
 ```bash
-python -m app.infrastructure.configs.migrate_database
+python3 -m app.infrastructure.configs.migrate_database
 ```
 
 5. Run the server
