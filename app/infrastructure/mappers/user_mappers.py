@@ -1,6 +1,6 @@
 from app.domain.models.user_model import UserModel
-
-from ..entities.user_entity import User
+from app.infrastructure.dto.authenticated_user_dto import AuthenticatedUserDTO
+from app.infrastructure.entities.user_entity import User
 
 
 def map_user_entity_to_user_model(user_entity: User) -> UserModel:
@@ -20,4 +20,13 @@ def map_user_model_to_user_entity(user_model: UserModel) -> User:
         last_name=user_model.last_name,
         name=user_model.name,
         password=user_model.password,
+    )
+
+
+def map_user_model_to_user_logged_dto(user_model: UserModel) -> AuthenticatedUserDTO:
+    return AuthenticatedUserDTO(
+        email=user_model.email,
+        id=user_model.id or 0,
+        last_name=user_model.last_name,
+        name=user_model.name,
     )

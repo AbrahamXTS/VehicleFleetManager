@@ -1,6 +1,6 @@
 from sqlmodel import Field, Relationship, SQLModel
 
-from .invitation_code_entity import InvitationCode
+from app.infrastructure.entities.invitation_code_entity import InvitationCode
 
 
 class User(SQLModel, table=True):

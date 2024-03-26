@@ -1,14 +1,17 @@
 from sqlmodel import Session, select
 
-from app.domain.models.user_model import UserModel
 from app.application.repositories.user_repository import UserRepository
-
-from ..configs.sql_database import db_engine
-from ..mappers.user_mappers import (
+from app.domain.models.invitation_code_model import InvitationCodeModel
+from app.domain.models.user_model import UserModel
+from app.infrastructure.configs.sql_database import db_engine
+from app.infrastructure.entities.user_entity import User
+from app.infrastructure.mappers.invitation_code_mappers import (
+    map_invitation_code_entity_to_invitation_code_model,
+)
+from app.infrastructure.mappers.user_mappers import (
     map_user_entity_to_user_model,
     map_user_model_to_user_entity,
 )
-from ..entities.user_entity import User
 
 
 class RelationalDatabaseUserRepositoryImpl(UserRepository):
@@ -27,6 +30,25 @@ class RelationalDatabaseUserRepositoryImpl(UserRepository):
                 users.append(map_user_entity_to_user_model(user_entity))
 
         return users
+
+    def get_invitation_codes_created_by_user_id(
+        self, user_id: int
+    ) -> list[InvitationCodeModel]:
+        invitation_codes = []
+
+        with Session(db_engine) as session:
+            for invitation_code_entity in (
+                session.exec(select(User).where(User.id == user_id))
+                .one()
+                .invitation_codes
+            ):
+                invitation_codes.append(
+                    map_invitation_code_entity_to_invitation_code_model(
+                        invitation_code_entity
+                    )
+                )
+
+        return invitation_codes
 
     def save_user(self, user: UserModel) -> UserModel:
         with Session(db_engine) as session:
@@ -48,9 +70,9 @@ class RelationalDatabaseUserRepositoryImpl(UserRepository):
 
             return map_user_entity_to_user_model(user_entity)
 
-    def delete_user(self, id: int) -> None:
+    def delete_user_by_user_id(self, user_id: int) -> None:
         with Session(db_engine) as session:
-            user_entity = session.exec(select(User).where(User.id == id)).one()
+            user_entity = session.exec(select(User).where(User.id == user_id)).one()
 
             session.delete(user_entity)
             session.commit()
