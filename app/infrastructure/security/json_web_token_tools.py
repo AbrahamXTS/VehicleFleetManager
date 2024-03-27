@@ -26,4 +26,4 @@ class JsonWebTokenTools:
             algorithms=[JsonWebTokenTools.__ALGORITHM],
         )
 
-        return payload.get("sub")
+        return payload
