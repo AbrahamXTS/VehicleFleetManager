@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .infrastructure.docs.openapi_tags import openapi_tags
 from .infrastructure.routers.auth_router import auth_router
 from .infrastructure.routers.invitation_codes_router import invitation_code_router
+from .infrastructure.routers.vehicle_router import vehicle_router
 from .infrastructure.routers.management_router import management_router
 
 load_dotenv()
@@ -26,6 +27,7 @@ app.include_router(
     invitation_code_router, prefix="/invitation-code", tags=["Invitation code"]
 )
 app.include_router(management_router, prefix="/management", tags=["Management"])
+app.include_router(vehicle_router, prefix='/vehicles', tags=["Vehicle"])
 
 app.add_middleware(
     CORSMiddleware,

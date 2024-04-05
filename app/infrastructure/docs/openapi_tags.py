@@ -11,4 +11,8 @@ openapi_tags = [
         "name": "Management",
         "description": "These routes are used to verify the correct functioning of the API.",
     },
+    {
+        "name": "Vehicle",
+        "description": "These routes are used to manage vehicles.",
+    },
 ]
