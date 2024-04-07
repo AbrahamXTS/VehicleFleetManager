@@ -10,12 +10,12 @@ class VehicleRepository:
     
     def get_vehicle_by_vin(self, vin: str) -> VehicleModel | None:
         raise NotImplementedError(
-            "Method get_vehicle_by_id hasn't been implemented yet."
+            "Method get_vehicle_by_vin hasn't been implemented yet."
         )
     
     def get_vehicle_by_plate(self, plate: str) -> VehicleModel | None:
         raise NotImplementedError(
-            "Method get_vehicle_by_id hasn't been implemented yet."
+            "Method get_vehicle_by_plate hasn't been implemented yet."
         )
 
     def get_vehicles(self) -> List[VehicleModel] | None:
