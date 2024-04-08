@@ -1,8 +1,14 @@
 from typing import Annotated, List
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from app.application.services.vehicle_service import VehicleService
 from app.domain.exceptions.conflict_with_existing_resource_exception import ConflictWithExistingResourceException
+from app.domain.exceptions.file_not_found_exception import FileNotFoundException
+from app.domain.exceptions.invalid_file_exception import InvalidFileException
+from app.domain.exceptions.invalid_resource_exception import InvalidResourceException
 from app.domain.exceptions.resource_not_found_exception import ResourceNotFoundException
+from app.domain.exceptions.invalid_base64_encode_exception import Invalid64EncodeException
+from app.infrastructure.services.base64_service import Base64Service
+from app.infrastructure.services.storage_service import StorageService
 from app.infrastructure.dto.authenticated_user_dto import AuthenticatedUserDTO
 from app.infrastructure.dto.vehicle_dto import VehicleDTO
 from app.infrastructure.dto.vehicle_request_dto import VehicleRequestDTO
@@ -17,11 +23,12 @@ from app.infrastructure.repositories.relational_database_user_repository_impl im
     RelationalDatabaseUserRepositoryImpl,
 )
 
-
 vehicle_router = APIRouter()
+base64_service = Base64Service()
 vehicle_service = VehicleService(
     vehicle_repository=RelationalDatabaseVehicleRepositoryImpl(),
-    user_repository=RelationalDatabaseUserRepositoryImpl()
+    user_repository=RelationalDatabaseUserRepositoryImpl(),
+    storage_service=StorageService('pictures', base64_service),
 )
 
 @vehicle_router.post("/", status_code=status.HTTP_201_CREATED)
@@ -43,6 +50,16 @@ def create_vehicule(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="There is already a vehicle with the license plate or VIN number provided.",
+        )
+    except InvalidFileException:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid file format or content. Please upload a valid image."
+        )
+    except Invalid64EncodeException:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid base64 encoding. Please provide a valid base64 encoded string."
         )
 
 @vehicle_router.put("/{vehicule_id}", status_code=status.HTTP_201_CREATED)
@@ -70,6 +87,16 @@ def edit_vehicle(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="There is already a vehicle with the license plate or VIN number provided.",
+        )
+    except InvalidFileException:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid file format or content. Please upload a valid image."
+        )
+    except Invalid64EncodeException:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid base64 encoding. Please provide a valid base64 encoded string."
         )
 
 @vehicle_router.get("/", status_code=status.HTTP_200_OK)
@@ -113,4 +140,28 @@ def remove_vehicle(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Vehicle not found"
+        )
+
+@vehicle_router.get("/{vehicle_vin}/picture", status_code=status.HTTP_200_OK)
+def download_vehicle_picture(
+    vehicle_vin: str,
+    authenticated_user: Annotated[
+        AuthenticatedUserDTO, Depends(protect_route_middlware)
+    ]
+):
+    try:
+        return Response(
+            vehicle_service.download_vehicle_picture(
+                vehicle_vin
+            )
+        )
+    except FileNotFoundException:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Picture not found for the specified vehicle VIN."
+        )
+    except InvalidFileException:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid picture file. Please ensure the file format is supported."
         )

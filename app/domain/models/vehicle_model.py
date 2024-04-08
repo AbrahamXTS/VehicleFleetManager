@@ -22,4 +22,3 @@ class VehicleModel:
         self.cost = cost
         self.picture = picture
         self.entry_date = entry_date
-
