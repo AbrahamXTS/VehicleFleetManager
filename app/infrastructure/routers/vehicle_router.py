@@ -28,7 +28,7 @@ base64_service = Base64Service()
 vehicle_service = VehicleService(
     vehicle_repository=RelationalDatabaseVehicleRepositoryImpl(),
     user_repository=RelationalDatabaseUserRepositoryImpl(),
-    storage_service=StorageService('pictures', base64_service),
+    storage_service=StorageService(base64_service, 'pictures'),
 )
 
 @vehicle_router.post("/", status_code=status.HTTP_201_CREATED)
