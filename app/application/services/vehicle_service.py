@@ -48,16 +48,14 @@ class VehicleService:
             vehicle=vehicle_update, id=id
         ):
             raise ConflictWithExistingResourceException
-        self.vehicle_repository.update_vehicle(
-            vehicle_update=vehicle_update, id=id
-        )
-
         if vehicle_update.picture:
             vehicle_update.picture = self.storage_service.save_base64_image(
                 vehicle_update.picture, 
                 f'{vehicle_update.vin}.jpg'
             )
-
+        self.vehicle_repository.update_vehicle(
+            vehicle_update=vehicle_update, id=id
+        )
         return self.vehicle_repository.get_vehicle_by_id(id)
 
     def create_vehicle(self, vehicle: VehicleModel):
