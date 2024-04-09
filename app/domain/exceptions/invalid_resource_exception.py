@@ -1,0 +1,2 @@
+class InvalidResourceException(Exception):
+    pass
