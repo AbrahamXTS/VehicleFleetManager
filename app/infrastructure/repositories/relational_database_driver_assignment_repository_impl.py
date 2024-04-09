@@ -25,6 +25,23 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                 session.refresh(driver_assignment_entity)
         return map_driver_assignment_entity_to_driver_assignment_model(driver_assignment_entity)
 
+    def get_driver_assignments(self, only_actives: bool) -> list[DriverAssignmentModel]:
+        with Session(db_engine) as session:
+            statement = select(DriverAssignment)
+            if only_actives:
+                statement = statement.where(DriverAssignment.active == True)
+            driver_assignment_entities = session.exec(statement).all()
+        return [
+            map_driver_assignment_entity_to_driver_assignment_model(driver_assignment_entity)
+            for driver_assignment_entity in driver_assignment_entities
+        ]
+
+    def get_driver_assignment(self, driver_id: int, vehicle_id: int, travel_date: date) -> DriverAssignmentModel:
+        with Session(db_engine) as session:
+            driver_assignment_entity = session.get(DriverAssignment, (driver_id, vehicle_id, travel_date))
+        if driver_assignment_entity:
+            return map_driver_assignment_entity_to_driver_assignment_model(driver_assignment_entity)
+
     def get_active_driver_assignments_with_driver_id_or_vehicle_id_at_date(
             self, driver_id: int, vehicle_id: int, travel_date: date
     ) -> list[DriverAssignmentModel]:

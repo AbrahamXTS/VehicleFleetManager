@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from datetime import date
 
 from app.application.services.driver_assignment_service import DriverAssignmentService
 from app.domain.exceptions.conflict_with_existing_resource_exception import ConflictWithExistingResourceException
@@ -30,3 +31,27 @@ def assign_driver(
     except ResourceNotFoundException as e:
         raise HTTPException(status_code=404, detail=str(e))
 
+
+@driver_assignment_router.get("")
+def get_driver_assignments():
+    return [
+        map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
+        for driver_assignment in driver_assignment_service.get_driver_assignments()
+    ]
+
+
+@driver_assignment_router.get("/active")
+def get_active_driver_assignments():
+    return [
+        map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
+        for driver_assignment in driver_assignment_service.get_driver_assignments(only_actives=True)
+    ]
+
+
+@driver_assignment_router.get("/{driver_id}/{vehicle_id}/{travel_date}")
+def get_driver_assignment(driver_id: int, vehicle_id: int, travel_date: date):
+    try:
+        driver_assignment = driver_assignment_service.get_driver_assignment(driver_id, vehicle_id, travel_date)
+        return map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
+    except ResourceNotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))

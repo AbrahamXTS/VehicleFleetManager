@@ -1,6 +1,7 @@
 from datetime import date
 from app.application.repositories.driver_assingment_repository import DriverAssignmentRepository
 from app.domain.exceptions.conflict_with_existing_resource_exception import ConflictWithExistingResourceException
+from app.domain.exceptions.resource_not_found_exception import ResourceNotFoundException
 from app.domain.models.driver_assignment import DriverAssignmentModel, DriverAssignmentIdModel, LocationModel
 
 
@@ -32,3 +33,11 @@ class DriverAssignmentService:
             )
         return self.driver_assignment_repository.assign_driver_to_vehicle(driver_assignment)
 
+    def get_driver_assignments(self, only_actives: bool = False) -> list[DriverAssignmentModel]:
+        return self.driver_assignment_repository.get_driver_assignments(only_actives)
+
+    def get_driver_assignment(self, driver_id: int, vehicle_id: int, travel_date: date) -> DriverAssignmentModel:
+        driver_assignment = self.driver_assignment_repository.get_driver_assignment(driver_id, vehicle_id, travel_date)
+        if not driver_assignment:
+            raise ResourceNotFoundException("Driver assignment not found")
+        return driver_assignment
