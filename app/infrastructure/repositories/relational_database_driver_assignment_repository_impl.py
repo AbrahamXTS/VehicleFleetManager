@@ -99,3 +99,10 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                 session.refresh(driver_assignment_entity)
         if driver_assignment_entity:
             return map_driver_assignment_entity_to_driver_assignment_model(driver_assignment_entity)
+        
+    def set_driver_assignment_as_inactive(self, driver_id: int, vehicle_id: int, travel_date: date) -> None:
+        with Session(db_engine) as session:
+            driver_assignment_entity = session.get(DriverAssignment, (driver_id, vehicle_id, travel_date))
+            if driver_assignment_entity:
+                driver_assignment_entity.active = False
+                session.commit()

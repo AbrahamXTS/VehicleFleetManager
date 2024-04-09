@@ -36,3 +36,8 @@ class DriverAssignmentRepository:
         raise NotImplementedError(
             "Method update_driver_assignment hasn't been implemented yet."
         )
+    
+    def set_driver_assignment_as_inactive(self, driver_id: int, vehicle_id: int, travel_date: date) -> None:
+        raise NotImplementedError(
+            "Method delete_driver_assignment hasn't been implemented yet."
+        )

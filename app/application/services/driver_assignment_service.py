@@ -68,3 +68,7 @@ class DriverAssignmentService:
                     "Driver assignment route is already taken by another driver assignment at the same day"
                 )
             return self.driver_assignment_repository.update_driver_assignment(driver_assignment)
+        
+    def set_driver_assignment_as_inactive(self, driver_id: int, vehicle_id: int, travel_date: date) -> None:
+        if self.get_driver_assignment(driver_id, vehicle_id, travel_date):
+            self.driver_assignment_repository.set_driver_assignment_as_inactive(driver_id, vehicle_id, travel_date)

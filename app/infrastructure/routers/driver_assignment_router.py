@@ -78,3 +78,12 @@ async def update_driver_assignment(driver_id: int, vehicle_id: int, travel_date:
         raise HTTPException(status_code=409, detail=str(e))
     else:
         return map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
+
+@driver_assignment_router.delete("/{driver_id}/{vehicle_id}/{travel_date}")
+def delete_driver_assignment(driver_id: int, vehicle_id: int, travel_date: date):
+    try:
+        driver_assignment_service.set_driver_assignment_as_inactive(driver_id, vehicle_id, travel_date)
+    except ResourceNotFoundException as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    else:
+        return {"message": "Driver assignment marked as inactive"}
