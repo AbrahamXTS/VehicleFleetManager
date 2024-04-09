@@ -8,6 +8,8 @@ from app.infrastructure.configs.sql_database import db_engine
 from app.infrastructure.entities.invitation_code_entity import InvitationCode
 from app.infrastructure.entities.user_entity import User
 from app.infrastructure.entities.vehicle_entity import Vehicle
+from app.infrastructure.entities.driver_entity import Driver
+from app.infrastructure.entities.driver_assignment_entity import DriverAssignment
 
 if __name__ == "__main__":
     SQLModel.metadata.create_all(db_engine)
