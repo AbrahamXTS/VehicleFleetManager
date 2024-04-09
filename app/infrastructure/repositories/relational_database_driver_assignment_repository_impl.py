@@ -79,3 +79,23 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
             driver_assignment_entity = session.exec(statement).first()
         if driver_assignment_entity:
             return map_driver_assignment_entity_to_driver_assignment_model(driver_assignment_entity)
+
+    def update_driver_assignment(self, driver_assignment: DriverAssignmentModel) -> DriverAssignmentModel:
+        with Session(db_engine) as session:
+            driver_assignment_entity = session.get(
+                DriverAssignment,
+                (driver_assignment.driver_id, driver_assignment.vehicle_id, driver_assignment.travel_date)
+            )
+            if driver_assignment_entity:
+                driver_assignment_entity.route_name = driver_assignment.route_name
+                driver_assignment_entity.origin_location_latitude = driver_assignment.origin_location.latitude
+                driver_assignment_entity.origin_location_longitude = driver_assignment.origin_location.longitude
+                driver_assignment_entity.destination_location_latitude = driver_assignment.destination_location.latitude
+                driver_assignment_entity.destination_location_longitude = driver_assignment.destination_location.longitude
+                driver_assignment_entity.completed_successfully = driver_assignment.completed_successfully
+                driver_assignment_entity.problem_description = driver_assignment.problem_description
+                driver_assignment_entity.comments = driver_assignment.comments
+                session.commit()
+                session.refresh(driver_assignment_entity)
+        if driver_assignment_entity:
+            return map_driver_assignment_entity_to_driver_assignment_model(driver_assignment_entity)

@@ -31,3 +31,8 @@ class DriverAssignmentRepository:
         raise NotImplementedError(
             "Method get_driver_assignment_by_destination_location_at_date hasn't been implemented yet."
         )
+    
+    def update_driver_assignment(self, driver_assignment: DriverAssignmentModel) -> DriverAssignmentModel:
+        raise NotImplementedError(
+            "Method update_driver_assignment hasn't been implemented yet."
+        )
