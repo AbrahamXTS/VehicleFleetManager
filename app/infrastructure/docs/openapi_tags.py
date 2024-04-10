@@ -4,6 +4,10 @@ openapi_tags = [
         "description": "These routes are used to handle user registration and login.",
     },
     {
+        "name": "Driver",
+        "description": "These routes are used to manage drivers info."
+    },
+    {
         "name": "Invitation code",
         "description": "These routes are used to manage user invitation codes.",
     },
