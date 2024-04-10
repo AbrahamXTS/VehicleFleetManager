@@ -41,3 +41,13 @@ class DriverAssignmentRepository:
         raise NotImplementedError(
             "Method delete_driver_assignment hasn't been implemented yet."
         )
+
+    def get_all_assignments_for_driver(self, driver_id: int) -> list[DriverAssignmentModel]:
+        raise NotImplementedError(
+            "Method get_all_assignments_for_driver hasn't been implemented yet."
+        )
+
+    def get_all_assignments_for_vehicle(self, vehicle_id: int) -> list[DriverAssignmentModel]:
+        raise NotImplementedError(
+            "Method get_all_assignments_for_vehicle hasn't been implemented yet."
+        )

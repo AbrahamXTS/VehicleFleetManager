@@ -79,6 +79,7 @@ async def update_driver_assignment(driver_id: int, vehicle_id: int, travel_date:
     else:
         return map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
 
+
 @driver_assignment_router.delete("/{driver_id}/{vehicle_id}/{travel_date}")
 def delete_driver_assignment(driver_id: int, vehicle_id: int, travel_date: date):
     try:
@@ -87,3 +88,19 @@ def delete_driver_assignment(driver_id: int, vehicle_id: int, travel_date: date)
         raise HTTPException(status_code=404, detail=str(e))
     else:
         return {"message": "Driver assignment marked as inactive"}
+
+
+@driver_assignment_router.get("/driver_history/{driver_id}")
+def get_driver_history(driver_id: int):
+    return [
+        map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
+        for driver_assignment in driver_assignment_service.get_assignments_history_for_driver(driver_id)
+    ]
+
+
+@driver_assignment_router.get("/vehicle_history/{vehicle_id}")
+def get_vehicle_history(vehicle_id: int):
+    return [
+        map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
+        for driver_assignment in driver_assignment_service.get_assignments_history_for_vehicle(vehicle_id)
+    ]

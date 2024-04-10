@@ -72,3 +72,9 @@ class DriverAssignmentService:
     def set_driver_assignment_as_inactive(self, driver_id: int, vehicle_id: int, travel_date: date) -> None:
         if self.get_driver_assignment(driver_id, vehicle_id, travel_date):
             self.driver_assignment_repository.set_driver_assignment_as_inactive(driver_id, vehicle_id, travel_date)
+
+    def get_assignments_history_for_driver(self, driver_id: int) -> list[DriverAssignmentModel]:
+        return self.driver_assignment_repository.get_all_assignments_for_driver(driver_id)
+
+    def get_assignments_history_for_vehicle(self, vehicle_id: int) -> list[DriverAssignmentModel]:
+        return self.driver_assignment_repository.get_all_assignments_for_vehicle(vehicle_id)

@@ -106,3 +106,23 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
             if driver_assignment_entity:
                 driver_assignment_entity.active = False
                 session.commit()
+
+    def get_all_assignments_for_driver(self, driver_id: int) -> list[DriverAssignmentModel]:
+        with Session(db_engine) as session:
+            driver_assignment_entities = session.exec(
+                select(DriverAssignment).where(DriverAssignment.driver_id == driver_id)
+            ).all()
+        return [
+            map_driver_assignment_entity_to_driver_assignment_model(driver_assignment_entity)
+            for driver_assignment_entity in driver_assignment_entities
+        ]
+
+    def get_all_assignments_for_vehicle(self, vehicle_id: int) -> list[DriverAssignmentModel]:
+        with Session(db_engine) as session:
+            driver_assignment_entities = session.exec(
+                select(DriverAssignment).where(DriverAssignment.vehicle_id == vehicle_id)
+            ).all()
+        return [
+            map_driver_assignment_entity_to_driver_assignment_model(driver_assignment_entity)
+            for driver_assignment_entity in driver_assignment_entities
+        ]
