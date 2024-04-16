@@ -12,4 +12,4 @@ COPY .env .
 
 EXPOSE 8000
 
-ENTRYPOINT ["uvicorn", "app.main:app"]
+ENTRYPOINT ["uvicorn", "--host", "0.0.0.0", "app.main:app"]
