@@ -23,3 +23,8 @@ class UserRepository:
 
     def delete_user_by_user_id(self, user_id: int) -> None:
         raise NotImplementedError("Method delete_user hasn't been implemented yet.")
+
+    def get_number_of_users(self):
+        raise NotImplementedError(
+            "Method get_number_of_users hasn't been implemented yet."
+        )

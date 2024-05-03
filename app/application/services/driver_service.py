@@ -43,3 +43,7 @@ class DriverService:
             raise ResourceNotFoundException
 
         return self.driver_repository.delete_driver_by_driver_id(driver_id)
+    
+    def get_number_of_drivers(self) -> int:
+        return self.driver_repository.get_number_of_drivers()
+

@@ -104,3 +104,8 @@ class RelationalDatabaseVehicleRepositoryImpl(VehicleRepository):
             return map_vehicle_entity_to_vehicle_model(
                 vehicle_entity
             )
+        
+    def get_number_of_vehicles(self) -> int:
+        with Session(db_engine) as session:
+            number_of_vehicles = len(session.exec(select(Vehicle)).all())
+        return number_of_vehicles

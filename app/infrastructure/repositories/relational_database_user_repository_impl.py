@@ -76,3 +76,8 @@ class RelationalDatabaseUserRepositoryImpl(UserRepository):
 
             session.delete(user_entity)
             session.commit()
+
+    def get_number_of_users(self) -> int:
+        with Session(db_engine) as session:
+            number_users = len(session.exec(select(User)).all())
+        return number_users

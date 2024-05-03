@@ -37,3 +37,8 @@ class VehicleRepository:
         raise NotImplementedError(
             "Method create_vehicle hasn't been implemented yet."
         )
+    
+    def get_number_of_vehicles(self):
+        raise NotImplementedError(
+            "Method get_number_of_vehicles hasn't been implemented yet."
+        )

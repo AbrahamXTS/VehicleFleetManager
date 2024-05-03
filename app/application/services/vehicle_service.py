@@ -72,3 +72,6 @@ class VehicleService:
         return self.storage_service.read_file_as_bytes(
             f'{vin}.jpg'
         )
+    
+    def get_number_of_vehicles(self) -> int:
+        return self.vehicle_repository.get_number_of_vehicles()

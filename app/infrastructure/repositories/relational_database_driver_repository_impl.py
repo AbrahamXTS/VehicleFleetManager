@@ -71,3 +71,8 @@ class RelationalDatabaseDriverRepositoryImpl(DriverRepository):
 
             session.delete(driver_entity)
             session.commit()
+
+    def get_number_of_drivers(self) -> int:
+        with Session(db_engine) as session:
+            number_of_drivers = len(session.exec(select(Driver)).all())
+        return number_of_drivers
