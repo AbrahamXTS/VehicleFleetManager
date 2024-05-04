@@ -73,5 +73,3 @@ class VehicleService:
             f'{vin}.jpg'
         )
     
-    def get_number_of_vehicles(self) -> int:
-        return self.vehicle_repository.get_number_of_vehicles()

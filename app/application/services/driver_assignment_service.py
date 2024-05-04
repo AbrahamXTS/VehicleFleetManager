@@ -78,6 +78,3 @@ class DriverAssignmentService:
 
     def get_assignments_history_for_vehicle(self, vehicle_id: int) -> list[DriverAssignmentModel]:
         return self.driver_assignment_repository.get_all_assignments_for_vehicle(vehicle_id)
-
-    def get_number_of_today_assigments(self) -> int:
-        return self.driver_assignment_repository.get_number_of_today_assignments()
