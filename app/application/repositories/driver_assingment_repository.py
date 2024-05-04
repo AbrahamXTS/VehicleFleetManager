@@ -51,3 +51,8 @@ class DriverAssignmentRepository:
         raise NotImplementedError(
             "Method get_all_assignments_for_vehicle hasn't been implemented yet."
         )
+    
+    def get_number_of_today_assignments(self):
+        raise NotImplementedError(
+            "Method get_number_of_today_assigments hasn't been implemented yet."
+        )

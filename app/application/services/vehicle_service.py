@@ -72,3 +72,4 @@ class VehicleService:
         return self.storage_service.read_file_as_bytes(
             f'{vin}.jpg'
         )
+    

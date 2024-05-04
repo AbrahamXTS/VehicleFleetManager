@@ -126,3 +126,11 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
             map_driver_assignment_entity_to_driver_assignment_model(driver_assignment_entity)
             for driver_assignment_entity in driver_assignment_entities
         ]
+    
+    def get_number_of_today_assignments(self) -> int:
+        today = date.today()  
+        formatted_date = today.strftime("%Y-%m-%d") 
+        with Session(db_engine) as session:
+            number_of_assigments = len(session.exec(
+                select(DriverAssignment).where(DriverAssignment.travel_date == formatted_date)).all())
+        return number_of_assigments
