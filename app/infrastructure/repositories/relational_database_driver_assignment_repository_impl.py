@@ -95,6 +95,7 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                 driver_assignment_entity.completed_successfully = driver_assignment.completed_successfully
                 driver_assignment_entity.problem_description = driver_assignment.problem_description
                 driver_assignment_entity.comments = driver_assignment.comments
+                session.add(driver_assignment_entity)
                 session.commit()
                 session.refresh(driver_assignment_entity)
         if driver_assignment_entity:
