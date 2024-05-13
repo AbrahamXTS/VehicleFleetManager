@@ -47,19 +47,25 @@ def assign_driver(
 
 
 @driver_assignment_router.get("")
-def get_driver_assignments() -> list[DriverAssignmentResponseDTO]:
+def get_driver_assignments(
+    travel_date: date | None = None,
+) -> list[DriverAssignmentResponseDTO]:
     return [
         map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
-        for driver_assignment in driver_assignment_service.get_driver_assignments()
+        for driver_assignment in driver_assignment_service.get_driver_assignments(
+            travel_date
+        )
     ]
 
 
 @driver_assignment_router.get("/active")
-def get_active_driver_assignments() -> list[DriverAssignmentResponseDTO]:
+def get_active_driver_assignments(
+    travel_date: date | None = None,
+) -> list[DriverAssignmentResponseDTO]:
     return [
         map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
         for driver_assignment in driver_assignment_service.get_driver_assignments(
-            only_actives=True
+            only_actives=True, travel_date=travel_date
         )
     ]
 

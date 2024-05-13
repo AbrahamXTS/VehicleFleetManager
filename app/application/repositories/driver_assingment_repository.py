@@ -8,7 +8,7 @@ class DriverAssignmentRepository:
             "Method assign_driver_to_vehicle hasn't been implemented yet."
         )
 
-    def get_driver_assignments(self, only_actives: bool) -> list[DriverAssignmentModel]:
+    def get_driver_assignments(self, only_actives: bool, travel_date: date | None) -> list[DriverAssignmentModel]:
         raise NotImplementedError(
             "Method get_driver_assignments hasn't been implemented yet."
         )

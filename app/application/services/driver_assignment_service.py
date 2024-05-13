@@ -41,8 +41,8 @@ class DriverAssignmentService:
             )
         return self.driver_assignment_repository.assign_driver_to_vehicle(driver_assignment)
 
-    def get_driver_assignments(self, only_actives: bool = False) -> list[DriverAssignmentModel]:
-        return self.driver_assignment_repository.get_driver_assignments(only_actives)
+    def get_driver_assignments(self, only_actives: bool = False, travel_date: date | None = None) -> list[DriverAssignmentModel]:
+        return self.driver_assignment_repository.get_driver_assignments(only_actives, travel_date)
 
     def get_driver_assignment(self, driver_id: int, vehicle_id: int, travel_date: date) -> DriverAssignmentModel:
         driver_assignment = self.driver_assignment_repository.get_driver_assignment(driver_id, vehicle_id, travel_date)

@@ -41,9 +41,11 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                 driver_assignment_entity
             )
 
-    def get_driver_assignments(self, only_actives: bool) -> list[DriverAssignmentModel]:
+    def get_driver_assignments(self, only_actives: bool, travel_date: date | None) -> list[DriverAssignmentModel]:
         with Session(db_engine) as session:
             statement = select(DriverAssignment)
+            if travel_date:
+                statement = statement.where(DriverAssignment.travel_date == travel_date)
             if only_actives:
                 statement = statement.where(DriverAssignment.active == True)
             driver_assignment_entities = session.exec(
