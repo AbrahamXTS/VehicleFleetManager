@@ -1,3 +1,5 @@
+import logging
+import yaml
 from os import getenv
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -42,3 +44,9 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
+
+with open('log_conf.yaml', 'rt') as f:
+    config = yaml.safe_load(f.read())
+
+# Configure the logging module with the config file
+logging.config.dictConfig(config)

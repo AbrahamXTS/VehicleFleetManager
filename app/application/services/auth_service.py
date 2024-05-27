@@ -1,3 +1,5 @@
+import logging
+
 from app.application.repositories.invitation_code_repository import (
     InvitationCodeRepository,
 )
@@ -23,10 +25,11 @@ class AuthService:
         self.invitation_code_repository = invitation_code_repository
         self.password_encryptor = password_encryptor
         self.user_repository = user_repository
+        self.logger = logging.getLogger(__name__)
 
     def login(self, email: str, password: str) -> UserModel:
         user = self.user_repository.get_user_by_email(email)
-
+        self.logger.debug(f"Logging in user with data: {email}")
         if not user or not self.password_encryptor.verify_password_hash(
             password, user.password
         ):

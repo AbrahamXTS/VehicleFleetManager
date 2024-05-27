@@ -1,5 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
+import logging
 
 from app.application.services.invitation_code_service import InvitationCodeService
 from app.domain.exceptions.conflict_with_existing_resource_exception import (
@@ -23,6 +24,7 @@ from app.infrastructure.repositories.relational_database_user_repository_impl im
 )
 
 
+logger = logging.getLogger(__name__)
 invitation_code_router = APIRouter()
 invitation_code_service = InvitationCodeService(
     invitation_code_repository=RelationalDatabaseInvitationCodeRepositoryImpl(),
@@ -36,6 +38,7 @@ def get_all_invitation_codes(
         AuthenticatedUserDTO, Depends(protect_route_middlware)
     ]
 ) -> list[InvitationCodeDTO]:
+    logger.info("GET /invitation_codes/")
     return [
         map_invitation_code_model_to_invitation_code_dto(invitation_code)
         for invitation_code in invitation_code_service.get_all_invitation_codes_by_user_id(
@@ -52,6 +55,8 @@ def create_invitation_code(
     ],
 ) -> InvitationCodeDTO:
     try:
+        logger.info("POST /invitation_codes/")
+        logger.debug(f"Request body: {invitation_code_request_dto}")
         return map_invitation_code_model_to_invitation_code_dto(
             invitation_code_service.create_invitation_code(
                 recipient_email=invitation_code_request_dto.email,
@@ -59,6 +64,7 @@ def create_invitation_code(
             )
         )
     except ConflictWithExistingResourceException:
+        logger.warning(f"POST /invitation_codes/ , Invitation code already exists. {status.HTTP_409_CONFLICT}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="An invitation code has already been generated for the email above",
@@ -74,6 +80,7 @@ def change_recipient_email_from_invitation_code(
     ],
 ) -> InvitationCodeDTO:
     try:
+        logger.info(f"PATCH /invitation_codes/{invitation_code}")
         return map_invitation_code_model_to_invitation_code_dto(
             invitation_code_service.update_recipient_email_from_invitation_code(
                 code=invitation_code,
@@ -82,11 +89,13 @@ def change_recipient_email_from_invitation_code(
             )
         )
     except ResourceNotFoundException:
+        logger.warning(f"PATCH /invitation_codes/{invitation_code} , Invitation code {invitation_code} not found. {status.HTTP_404_NOT_FOUND}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Invitation code not found",
         )
     except ConflictWithExistingResourceException:
+        logger.warning(f"PATCH /invitation_codes/{invitation_code}, Invitation code already exists. {status.HTTP_409_CONFLICT}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="An invitation code has already been generated for the email above",
@@ -103,10 +112,12 @@ def delete_invitation_code(
     ],
 ) -> None:
     try:
+        logger.info(f"DELETE /invitation_codes/{invitation_code}")
         invitation_code_service.delete_invitation_code_by_code(
             code=invitation_code, authenticated_user_id=authenticated_user.id
         )
     except ResourceNotFoundException:
+        logger.warning(f"DELETE /invitation_codes/{invitation_code} , Invitation code {invitation_code} not found. {status.HTTP_404_NOT_FOUND}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Invitation code not found",
