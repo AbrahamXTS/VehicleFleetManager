@@ -8,7 +8,6 @@ from app.application.repositories.vehicle_repository import (
 from app.infrastructure.configs.sql_database import db_engine
 from app.infrastructure.entities.vehicle_entity import Vehicle
 from app.domain.models.vehicle_model import VehicleModel
-from app.infrastructure.entities.vehicle_entity import Vehicle
 from app.infrastructure.mappers.vehicle_mappers import (
     map_vehicle_entity_to_vehicle_model,
     map_vehicle_model_to_vehicle_entity,
@@ -107,7 +106,7 @@ class RelationalDatabaseVehicleRepositoryImpl(VehicleRepository):
     def create_vehicle(
         self, vehicle: VehicleModel
     ) -> VehicleModel:
-        self.logger.info(f"Method create_vehicle(), Creating vehicle")
+        self.logger.info("Method create_vehicle(), Creating vehicle")
         with Session(db_engine) as session:
             vehicle_entity = (
                 map_vehicle_model_to_vehicle_entity(vehicle)

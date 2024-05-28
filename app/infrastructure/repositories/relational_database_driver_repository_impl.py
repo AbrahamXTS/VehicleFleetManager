@@ -50,7 +50,7 @@ class RelationalDatabaseDriverRepositoryImpl(DriverRepository):
             ]
 
     def save_driver(self, driver: DriverModel) -> DriverModel:
-        self.logger.info(f"Method save_driver()")
+        self.logger.info("Method save_driver()")
         with Session(db_engine) as session:
             driver_entity = None
 

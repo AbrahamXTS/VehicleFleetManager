@@ -22,13 +22,13 @@ class InvitationCodeService:
     def get_all_invitation_codes_by_user_id(
         self, user_id: int
     ) -> list[InvitationCodeModel]:
-        self.logger.info(f"Method get_all_invitation_codes_by_user_id()")
+        self.logger.info("Method get_all_invitation_codes_by_user_id()")
         return self.user_repository.get_invitation_codes_created_by_user_id(user_id)
 
     def create_invitation_code(
         self, recipient_email: str, authenticated_user_id: int
     ) -> InvitationCodeModel:
-        self.logger.info(f"Method create_invitation_code()")
+        self.logger.info("Method create_invitation_code()")
         if self.user_repository.get_user_by_email(
             recipient_email
         ) or self.invitation_code_repository.get_invitation_code_by_email(
@@ -46,7 +46,7 @@ class InvitationCodeService:
     def update_recipient_email_from_invitation_code(
         self, code: str, recipient_email: str, authenticated_user_id: int
     ) -> InvitationCodeModel:
-        self.logger.info(f"Method update_recipient_email_from_invitation_code()")
+        self.logger.info("Method update_recipient_email_from_invitation_code()")
         if code not in [
             invitation_code.code
             for invitation_code in self.user_repository.get_invitation_codes_created_by_user_id(
@@ -74,7 +74,7 @@ class InvitationCodeService:
     def delete_invitation_code_by_code(
         self, code: str, authenticated_user_id: int
     ) -> None:
-        self.logger.info(f"Method delete_invitation_code_by_code()")
+        self.logger.info("Method delete_invitation_code_by_code()")
         if code not in [
             invitation_code.code
             for invitation_code in self.user_repository.get_invitation_codes_created_by_user_id(

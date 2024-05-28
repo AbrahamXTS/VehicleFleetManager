@@ -30,7 +30,7 @@ class DriverAssignmentService:
             return driver_assignment.completed_successfully
 
     def assign_driver_to_vehicle(self, driver_assignment: DriverAssignmentModel) -> DriverAssignmentModel:
-        self.logger.info(f"Method assign_driver_to_vehicle()")
+        self.logger.info("Method assign_driver_to_vehicle()")
         if self.driver_assignment_repository.get_active_driver_assignments_with_driver_id_or_vehicle_id_at_date(
                 driver_assignment.driver_id, driver_assignment.vehicle_id, driver_assignment.travel_date
         ):
@@ -52,7 +52,7 @@ class DriverAssignmentService:
         return self.driver_assignment_repository.get_driver_assignments(only_actives, travel_date)
 
     def get_driver_assignment(self, driver_id: int, vehicle_id: int, travel_date: date) -> DriverAssignmentModel:
-        self.logger.info(f"Method get_driver_assignment()")
+        self.logger.info("Method get_driver_assignment()")
         driver_assignment = self.driver_assignment_repository.get_driver_assignment(driver_id, vehicle_id, travel_date)
         if not driver_assignment:
             self.logger.warning(f"Driver assignment not found for driver {driver_id} and vehicle {vehicle_id} on {travel_date}")
@@ -61,7 +61,7 @@ class DriverAssignmentService:
         return driver_assignment
 
     def update_driver_assignment(self, driver_assignment: DriverAssignmentModel) -> DriverAssignmentModel:
-        self.logger.info(f"Method update_driver_assignment()")
+        self.logger.info("Method update_driver_assignment()")
         if assignment := self.get_driver_assignment(
                 driver_assignment.driver_id, driver_assignment.vehicle_id, driver_assignment.travel_date
         ):

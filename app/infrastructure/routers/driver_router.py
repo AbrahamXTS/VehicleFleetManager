@@ -1,4 +1,3 @@
-from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 import logging
 
@@ -73,7 +72,7 @@ def create_driver(driver_request_dto: DriverRequestDTO) -> DriverDTO:
 @driver_router.put("", status_code=status.HTTP_200_OK)
 def edit_driver_information(driver_dto: DriverDTO) -> DriverDTO:
     try:
-        logger.info(f"PUT /driver")
+        logger.info("PUT /driver")
         logger.debug(f"Request body: {driver_dto}")
         return map_driver_model_to_driver_dto(
             driver_service.update_driver(

@@ -1,8 +1,6 @@
 import os
 from app.domain.exceptions.file_not_found_exception import FileNotFoundException
 from app.domain.exceptions.invalid_file_exception import InvalidFileException
-from app.domain.exceptions.invalid_resource_exception import InvalidResourceException
-from app.domain.exceptions.resource_not_found_exception import ResourceNotFoundException
 from app.infrastructure.services.base64_service import Base64Service
 
 

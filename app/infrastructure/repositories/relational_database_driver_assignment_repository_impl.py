@@ -53,7 +53,7 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
             if travel_date:
                 statement = statement.where(DriverAssignment.travel_date == travel_date)
             if only_actives:
-                statement = statement.where(DriverAssignment.active == True)
+                statement = statement.where(DriverAssignment.active)
             driver_assignment_entities = session.exec(
                 statement.order_by(
                     DriverAssignment.travel_date.desc(),
@@ -94,7 +94,7 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                         DriverAssignment.vehicle_id == vehicle_id,
                     ),
                     DriverAssignment.travel_date == travel_date,
-                    DriverAssignment.active == True,
+                    DriverAssignment.active,
                 )
             ).all()
             self.logger.debug(f"Driver assignments: {driver_assignment_entities}")
@@ -115,7 +115,7 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                 DriverAssignment.destination_location_latitude == location.latitude,
                 DriverAssignment.destination_location_longitude == location.longitude,
                 DriverAssignment.travel_date == travel_date,
-                DriverAssignment.active == True,
+                DriverAssignment.active,
             )
             if exclude_assignment:
                 statement = statement.where(

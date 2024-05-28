@@ -32,7 +32,7 @@ class VehicleService:
         return self.vehicle_repository.get_vehicles()
     
     def remove_vehicle_by_id(self, id: int):
-        self.logger.info(f"Method remove_vehicle_by_id()")
+        self.logger.info("Method remove_vehicle_by_id()")
         if not self.vehicle_repository.get_vehicle_by_id(id=id):
             self.logger.warning(f"Vehicle with id {id} not found")
             raise ResourceNotFoundException
