@@ -6,13 +6,15 @@ from datetime import date, datetime
 class LocationDTO(BaseModel):
     latitude: Decimal
     longitude: Decimal
-    
+
+
 class DriverDTO(BaseModel):
     first_name: str
     last_name: str
     curp: str
     license_number: str
-    
+
+
 class VehicleDTO(BaseModel):
     brand: str
     model: str

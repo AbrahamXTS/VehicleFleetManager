@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
+import logging
 
 from app.application.services.auth_service import AuthService
 from app.domain.exceptions.conflict_with_existing_resource_exception import (
@@ -28,6 +29,7 @@ from app.infrastructure.security.bcrypt_password_encryptor_impl import (
 from app.infrastructure.security.json_web_token_tools import JsonWebTokenTools
 
 
+logger = logging.getLogger(__name__)
 auth_router = APIRouter()
 auth_service = AuthService(
     invitation_code_repository=RelationalDatabaseInvitationCodeRepositoryImpl(),
@@ -38,9 +40,11 @@ auth_service = AuthService(
 
 @auth_router.post("/login", status_code=status.HTTP_200_OK)
 def login_user(
-    user_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    user_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> AuthResponseDTO:
     try:
+        logger.info("POST /login/")
+        logger.debug(f"{status.HTTP_200_OK}, Request body: {user_data.username}")
         user = auth_service.login(email=user_data.username, password=user_data.password)
 
         return AuthResponseDTO(
@@ -49,6 +53,9 @@ def login_user(
             user=map_user_model_to_user_logged_dto(user),
         )
     except InvalidCredentialsException:
+        logger.warning(
+            f"POST /login/ , Invalid credentials. {status.HTTP_401_UNAUTHORIZED}"
+        )
         raise HTTPException(
             headers={"WWW-Authenticate": "Bearer"},
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -59,15 +66,23 @@ def login_user(
 @auth_router.post("/signup", status_code=status.HTTP_201_CREATED)
 def signup_user(candidate: CandidateDTO) -> AuthenticatedUserDTO:
     try:
+        logger.info("POST /signup/")
+        logger.debug(f"Request body: {candidate.email}")
         return map_user_model_to_user_logged_dto(
             auth_service.signup(map_candidate_dto_to_candidate_model(candidate))
         )
     except InvalidCredentialsException:
+        logger.warning(
+            f"POST /signup/ , Invalid credentials. {status.HTTP_401_UNAUTHORIZED}"
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid invitation code",
         )
     except ConflictWithExistingResourceException:
+        logger.warning(
+            f"POST /signup/ , Email address already in use. {status.HTTP_409_CONFLICT}"
+        )
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="This email address is already in use",

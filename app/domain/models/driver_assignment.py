@@ -6,14 +6,18 @@ class LocationModel:
     def __init__(self, latitude: Decimal, longitude: Decimal) -> None:
         self.latitude = latitude
         self.longitude = longitude
-        
+
+
 class Driver:
-    def __init__(self, first_name: str, last_name: str, curp: str, license_number: str) -> None:
+    def __init__(
+        self, first_name: str, last_name: str, curp: str, license_number: str
+    ) -> None:
         self.first_name = first_name
         self.last_name = last_name
         self.curp = curp
         self.license_number = license_number
-        
+
+
 class Vehicle:
     def __init__(self, brand: str, model: str, vin: str, plate: str) -> None:
         self.brand = brand
@@ -37,7 +41,7 @@ class DriverAssignmentModel:
         comments: str | None = None,
         active: bool = True,
         driver: Driver | None = None,
-        vehicle: Vehicle | None = None
+        vehicle: Vehicle | None = None,
     ) -> None:
         self.driver_id = driver_id
         self.vehicle_id = vehicle_id
@@ -55,12 +59,7 @@ class DriverAssignmentModel:
 
 
 class DriverAssignmentIdModel:
-    def __init__(
-        self,
-        driver_id: int,
-        vehicle_id: int,
-        travel_date: date
-    ) -> None:
+    def __init__(self, driver_id: int, vehicle_id: int, travel_date: date) -> None:
         self.driver_id = driver_id
         self.vehicle_id = vehicle_id
         self.travel_date = travel_date

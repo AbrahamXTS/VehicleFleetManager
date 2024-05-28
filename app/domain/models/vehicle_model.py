@@ -1,17 +1,18 @@
 from datetime import datetime
 
+
 class VehicleModel:
     def __init__(
         self,
         id: int | None,
-        brand: str, 
-        model: str, 
+        brand: str,
+        model: str,
         vin: str,
         plate: str,
         purchase_date: str | datetime,
         cost: float | int,
         picture: str,
-        entry_date: str | datetime
+        entry_date: str | datetime,
     ) -> None:
         self.id = id
         self.brand = brand

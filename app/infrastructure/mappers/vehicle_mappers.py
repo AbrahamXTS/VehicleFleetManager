@@ -16,7 +16,7 @@ def map_vehicle_entity_to_vehicle_model(
         purchase_date=vehicle_entity.purchase_date,
         cost=vehicle_entity.cost,
         picture=vehicle_entity.picture,
-        entry_date=vehicle_entity.entry_date
+        entry_date=vehicle_entity.entry_date,
     )
 
 
@@ -32,7 +32,7 @@ def map_vehicle_model_to_vehicle_entity(
         purchase_date=vehicle_model.purchase_date,
         cost=vehicle_model.cost,
         picture=vehicle_model.picture,
-        entry_date=vehicle_model.entry_date
+        entry_date=vehicle_model.entry_date,
     )
 
 
@@ -48,7 +48,7 @@ def map_vehicle_model_to_vehicle_dto(
         purchase_date=vehicle_model.purchase_date,
         cost=vehicle_model.cost,
         picture=vehicle_model.picture,
-        entry_date=vehicle_model.entry_date
+        entry_date=vehicle_model.entry_date,
     )
 
 
@@ -64,5 +64,5 @@ def map_vehicle_dto_to_vehicle_model(
         purchase_date=vehicle_request_dto.purchase_date,
         cost=vehicle_request_dto.cost,
         picture=vehicle_request_dto.picture,
-        entry_date=None
+        entry_date=None,
     )

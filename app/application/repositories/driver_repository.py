@@ -22,7 +22,7 @@ class DriverRepository:
         raise NotImplementedError(
             "Method delete_driver_by_driver_id hasn't been implemented yet."
         )
-    
+
     def get_number_of_drivers(self):
         raise NotImplementedError(
             "Method get_number_of_drivers hasn't been implemented yet."
