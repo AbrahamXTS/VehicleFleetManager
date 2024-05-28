@@ -9,7 +9,7 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ./app.log:/business-fleet-manager/app.log
+      - ./logs:/business-fleet-manager/logs
       - ./pictures:/business-fleet-manager/pictures
     environment:
       DATABASE_URL: mysql+pymysql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:3306/${DATABASE_NAME}
@@ -38,7 +38,7 @@ services:
     image: logstash:8.13.4
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./app.log:/usr/share/logstash/app.log
+      - ./logs:/usr/share/logstash/logs
       - ./sincedb:/usr/share/logstash/sincedb
     command: logstash -f /usr/share/logstash/pipeline/logstash.conf
     restart: always
