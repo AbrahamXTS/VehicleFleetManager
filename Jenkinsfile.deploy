@@ -1,6 +1,11 @@
 pipeline {
     agent any
     stages {
+        stage('Copy archive') {
+            steps {
+                copyArtifacts(projectName: 'proy-devops-back-build')
+            }
+        }
         stage('Stop active containers') {
             steps {
                 sh 'docker compose down'
