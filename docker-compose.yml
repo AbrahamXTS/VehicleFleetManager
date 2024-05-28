@@ -1,31 +1,18 @@
 version: '3.8'
 
 services:
-  db:
-    container_name: ${MYSQL_DATABASE}
-    image: mariadb:11.3-jammy
-    ports:
-      - 3306:3306
-    volumes:
-      - devops-volume:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    restart: always
-    
   api-service:
     container_name: vehicle-management-api
-    depends_on:
-      - db
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - 8000:8000
+    volumes:
+      - ./app.log:/business-fleet-manager/app.log
+      - ./pictures:/business-fleet-manager/pictures
     environment:
-      DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_DATABASE}:3306/${MYSQL_DATABASE}
+      DATABASE_URL: mysql+pymysql://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:3306/${DATABASE_NAME}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ALGORITHM: ${JWT_ALGORITHM}
     restart: always
@@ -45,12 +32,14 @@ services:
 
   logstash:
     depends_on:
+      - api-service
       - elastic
     container_name: logstash
     image: logstash:8.13.4
     volumes:
       - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
       - ./app.log:/usr/share/logstash/app.log
+      - ./sincedb:/usr/share/logstash/sincedb
     command: logstash -f /usr/share/logstash/pipeline/logstash.conf
     restart: always
     
@@ -62,9 +51,8 @@ services:
     image: docker.elastic.co/kibana/kibana:8.13.4
     ports:
       - 5601:5601
+    restart: always
 
 volumes:
-  devops-volume:
-    external: false
   esdata:
     external: false
