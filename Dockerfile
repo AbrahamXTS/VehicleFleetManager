@@ -8,8 +8,10 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 COPY /app app
 
-COPY .env .
+# COPY .env .
+
+COPY ./log_conf.yaml .
 
 EXPOSE 8000
 
-ENTRYPOINT ["uvicorn", "--host", "0.0.0.0", "app.main:app"]
+CMD ["uvicorn", "--host", "0.0.0.0", "app.main:app", "--log-config=log_conf.yaml"]

@@ -39,8 +39,7 @@ vehicle_service = VehicleService(
     storage_service=StorageService(base64_service, "pictures"),
 )
 
-
-@vehicle_router.post("/", status_code=status.HTTP_201_CREATED)
+@vehicle_router.post("", status_code=status.HTTP_201_CREATED)
 def create_vehicule(
     vehicle_request_dto: VehicleRequestDTO,
     authenticated_user: Annotated[
@@ -130,8 +129,7 @@ def edit_vehicle(
             detail="Invalid base64 encoding. Please provide a valid base64 encoded string.",
         )
 
-
-@vehicle_router.get("/", status_code=status.HTTP_200_OK)
+@vehicle_router.get("", status_code=status.HTTP_200_OK)
 def get_vehicles(
     authenticated_user: Annotated[
         AuthenticatedUserDTO, Depends(protect_route_middlware)

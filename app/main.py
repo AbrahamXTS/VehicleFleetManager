@@ -16,12 +16,12 @@ from .infrastructure.routers.vehicle_router import vehicle_router
 load_dotenv()
 
 app = FastAPI(
-    title=getenv("MICROSERVICE_NAME", ""),
-    summary=getenv("MICROSERVICE_SUMMARY", ""),
-    version=getenv("MICROSERVICE_VERSION", ""),
+    title="Vehicle Management API",
+    summary="API for managing vehicles and drivers of a transportation company",
+    version="1.0.0",
     contact={
-        "name": getenv("MICROSERVICE_DEVELOPER", ""),
-        "email": getenv("MICROSERVICE_DEVELOPER_EMAIL", ""),
+        "name": "Spaghetti scripters team",
+        "email": "spaghetti-scripters@gmail.com"
     },
     openapi_tags=openapi_tags,
 )
