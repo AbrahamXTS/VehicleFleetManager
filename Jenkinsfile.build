@@ -55,4 +55,9 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            archiveArtifacts artifacts: '.env', onlyIfSuccessful: true
+        }
+    }
 }
