@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    environment {
+        DATABASE_USER=credentials('db-user')
+        DATABASE_PASSWORD=credentials('db-password')
+        DATABASE_HOST='host.docker.internal'
+        DATABASE_NAME='proyecto-devops'
+        JWT_SECRET_KEY = credentials('jwt-secret-key')
+        JWT_ALGORITHM = 'HS256'
+    }
+    stages {
+        stage('Environment setup') {
+            steps {
+                script {
+                    sh '''
+                        python3 -m venv venv
+                        source venv/bin/activate
+                        pip install -r requirements.txt
+                        deactivate
+                    '''
+                }
+            }
+        }
+        stage('Create .env file') {
+            steps {
+                script {
+                    sh '''
+                        cat <<EOF > .env
+                        DATABASE_USER=${DATABASE_USER}
+                        DATABASE_PASSWORD=${DATABASE_PASSWORD}
+                        DATABASE_HOST=${DATABASE_HOST}
+                        DATABASE_NAME=${DATABASE_NAME}
+                        JWT_SECRET_KEY=${JWT_SECRET_KEY}
+                        JWT_ALGORITHM=${JWT_ALGORITHM}
+                        EOF
+                    '''
+                }
+            }
+        }
+        stage('Lint') {
+            steps {
+                script {
+                    sh '''
+                        source venv/bin/activate
+                        ruff check
+                        deactivate
+                    '''
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'docker compose build'
+            }
+        }
+    }
+    // post {
+    //     always {
+    //         cleanWs()
+    //     }
+    // }
+}
