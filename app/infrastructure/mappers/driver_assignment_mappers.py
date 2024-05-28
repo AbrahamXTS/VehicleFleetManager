@@ -1,5 +1,5 @@
-from app.domain.models.driver_assignment import DriverAssignmentModel, LocationModel
-from app.infrastructure.dto.driver_assignment_dto import DriverAssignmentRequestDTO, DriverAssignmentResponseDTO, LocationDTO
+from app.domain.models.driver_assignment import Driver, DriverAssignmentModel, LocationModel, Vehicle
+from app.infrastructure.dto.driver_assignment_dto import DriverAssignmentRequestDTO, DriverAssignmentResponseDTO, DriverDTO, LocationDTO, VehicleDTO
 from app.infrastructure.entities.driver_assignment_entity import DriverAssignment
 
 
@@ -46,6 +46,18 @@ def map_driver_assignment_model_to_driver_assignment_dto(
         problem_description=driver_assignment.problem_description,
         comments=driver_assignment.comments,
         active=driver_assignment.active,
+        driver=DriverDTO(
+            first_name=driver_assignment.driver.first_name,
+            last_name=driver_assignment.driver.last_name,
+            curp=driver_assignment.driver.curp,
+            license_number=driver_assignment.driver.license_number,
+        ),
+        vehicle=VehicleDTO(
+            brand=driver_assignment.vehicle.brand,
+            model=driver_assignment.vehicle.model,
+            vin=driver_assignment.vehicle.vin,
+            plate=driver_assignment.vehicle.plate,
+        ),
     )
 
 
@@ -88,4 +100,16 @@ def map_driver_assignment_entity_to_driver_assignment_model(
         problem_description=driver_assignment_entity.problem_description,
         comments=driver_assignment_entity.comments,
         active=driver_assignment_entity.active,
+        driver=Driver(
+            first_name=driver_assignment_entity.driver.first_name,
+            last_name=driver_assignment_entity.driver.last_name,
+            curp=driver_assignment_entity.driver.curp,
+            license_number=driver_assignment_entity.driver.license_number,
+        ),
+        vehicle=Vehicle(
+            brand=driver_assignment_entity.vehicle.brand,
+            model=driver_assignment_entity.vehicle.model,
+            vin=driver_assignment_entity.vehicle.vin,
+            plate=driver_assignment_entity.vehicle.plate,
+        ),
     )

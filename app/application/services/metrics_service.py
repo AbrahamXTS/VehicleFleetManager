@@ -22,10 +22,9 @@ class MetricsService():
 
     def get_metrics(self): 
         self.logger.info("Method get_metrics(), Getting metrics information")
-        metrics = {
-            "number of vehicles": self.vehicle_repository.get_number_of_vehicles(),
-            "number of users": self.user_repository.get_number_of_users(),
-            "number of drivers": self.driver_repository.get_number_of_drivers(),
-            "number of today assignments": self.driver_assignment_repository.get_number_of_today_assignments()
+        return {
+            "number_of_vehicles": self.vehicle_repository.get_number_of_vehicles(),
+            "number_of_users":self.user_repository.get_number_of_users(),
+            "number_of_drivers":self.driver_repository.get_number_of_drivers(),
+            "number_of_today_assigment":self.driver_assignment_repository.get_number_of_today_assignments()
         }
-        return metrics

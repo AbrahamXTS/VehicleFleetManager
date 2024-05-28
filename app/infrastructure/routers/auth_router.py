@@ -10,7 +10,7 @@ from app.domain.exceptions.conflict_with_existing_resource_exception import (
 from app.domain.exceptions.invalid_credentials_exception import (
     InvalidCredentialsException,
 )
-from app.infrastructure.dto.bearer_token_dto import BearerTokenDTO
+from app.infrastructure.dto.auth_response_dto import AuthResponseDTO
 from app.infrastructure.dto.candidate_dto import CandidateDTO
 from app.infrastructure.dto.authenticated_user_dto import AuthenticatedUserDTO
 from app.infrastructure.mappers.candidate_mappers import (
@@ -41,15 +41,16 @@ auth_service = AuthService(
 @auth_router.post("/login", status_code=status.HTTP_200_OK)
 def login_user(
     user_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-) -> BearerTokenDTO:
+) -> AuthResponseDTO:
     try:
         logger.info("POST /login/")
         logger.debug(f"{status.HTTP_200_OK}, Request body: {user_data.username}")
         user = auth_service.login(email=user_data.username, password=user_data.password)
 
-        return BearerTokenDTO(
+        return AuthResponseDTO(
             access_token=JsonWebTokenTools.create_access_token(user.email),
             token_type="bearer",
+            user=map_user_model_to_user_logged_dto(user),
         )
     except InvalidCredentialsException:
         logger.warning(f"POST /login/ , Invalid credentials. {status.HTTP_401_UNAUTHORIZED}")
