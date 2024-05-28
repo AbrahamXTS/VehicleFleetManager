@@ -1,5 +1,16 @@
-from app.domain.models.driver_assignment import Driver, DriverAssignmentModel, LocationModel, Vehicle
-from app.infrastructure.dto.driver_assignment_dto import DriverAssignmentRequestDTO, DriverAssignmentResponseDTO, DriverDTO, LocationDTO, VehicleDTO
+from app.domain.models.driver_assignment import (
+    Driver,
+    DriverAssignmentModel,
+    LocationModel,
+    Vehicle,
+)
+from app.infrastructure.dto.driver_assignment_dto import (
+    DriverAssignmentRequestDTO,
+    DriverAssignmentResponseDTO,
+    DriverDTO,
+    LocationDTO,
+    VehicleDTO,
+)
 from app.infrastructure.entities.driver_assignment_entity import DriverAssignment
 
 
