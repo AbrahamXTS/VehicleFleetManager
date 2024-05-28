@@ -45,10 +45,14 @@ def assign_driver(
         )
         return map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
     except ConflictWithExistingResourceException as e:
-        logger.warning(f"POST /driver_assignment/ , Driver assignment already exists. {status.HTTP_409_CONFLICT}")
+        logger.warning(
+            f"POST /driver_assignment/ , Driver assignment already exists. {status.HTTP_409_CONFLICT}"
+        )
         raise HTTPException(status_code=409, detail=str(e))
     except ResourceNotFoundException as e:
-        logger.warning(f"POST /driver_assignment/ , Resource not found. {status.HTTP_404_NOT_FOUND}")
+        logger.warning(
+            f"POST /driver_assignment/ , Resource not found. {status.HTTP_404_NOT_FOUND}"
+        )
         raise HTTPException(status_code=404, detail=str(e))
 
 
@@ -84,10 +88,14 @@ def get_driver_assignment(
 ) -> DriverAssignmentResponseDTO:
     try:
         logger.info(f"GET /driver_assignment/{driver_id}/{vehicle_id}/{travel_date}")
-        driver_assignment = driver_assignment_service.get_driver_assignment(driver_id, vehicle_id, travel_date)
+        driver_assignment = driver_assignment_service.get_driver_assignment(
+            driver_id, vehicle_id, travel_date
+        )
         return map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
     except ResourceNotFoundException as e:
-        logger.warning(f"GET /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Resource not found. {status.HTTP_404_NOT_FOUND}")
+        logger.warning(
+            f"GET /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Resource not found. {status.HTTP_404_NOT_FOUND}"
+        )
         raise HTTPException(status_code=404, detail=str(e))
 
 
@@ -112,13 +120,19 @@ async def update_driver_assignment(
             )
         )
     except ResourceNotFoundException as e:
-        logger.warning(f"PUT /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Resource not found. {status.HTTP_400_BAD_REQUEST}")
+        logger.warning(
+            f"PUT /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Resource not found. {status.HTTP_400_BAD_REQUEST}"
+        )
         raise HTTPException(status_code=404, detail=str(e))
     except InvalidArgumentException as e:
-        logger.warning(f"PUT /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Invalid argument. {status.HTTP_400_BAD_REQUEST}")
+        logger.warning(
+            f"PUT /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Invalid argument. {status.HTTP_400_BAD_REQUEST}"
+        )
         raise HTTPException(status_code=400, detail=str(e))
     except ConflictWithExistingResourceException as e:
-        logger.warning(f" PUT /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Driver assignment already exists. {status.HTTP_409_CONFLICT}")
+        logger.warning(
+            f" PUT /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Driver assignment already exists. {status.HTTP_409_CONFLICT}"
+        )
         raise HTTPException(status_code=409, detail=str(e))
     else:
         return map_driver_assignment_model_to_driver_assignment_dto(driver_assignment)
@@ -128,9 +142,13 @@ async def update_driver_assignment(
 def delete_driver_assignment(driver_id: int, vehicle_id: int, travel_date: date):
     try:
         logger.info(f"DELETE /driver_assignment/{driver_id}/{vehicle_id}/{travel_date}")
-        driver_assignment_service.set_driver_assignment_as_inactive(driver_id, vehicle_id, travel_date)
+        driver_assignment_service.set_driver_assignment_as_inactive(
+            driver_id, vehicle_id, travel_date
+        )
     except ResourceNotFoundException as e:
-        logger.warning(f"DELETE /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Resource not found. {status.HTTP_404_NOT_FOUND}")
+        logger.warning(
+            f"DELETE /driver_assignment/{driver_id}/{vehicle_id}/{travel_date} , Resource not found. {status.HTTP_404_NOT_FOUND}"
+        )
         raise HTTPException(status_code=404, detail=str(e))
     else:
         return {"message": "Driver assignment marked as inactive"}

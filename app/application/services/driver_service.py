@@ -9,6 +9,7 @@ from app.domain.exceptions.conflict_with_existing_resource_exception import (
 from app.domain.exceptions.resource_not_found_exception import ResourceNotFoundException
 from app.domain.models.driver_model import DriverModel
 
+
 class DriverService:
     def __init__(
         self,
@@ -54,4 +55,3 @@ class DriverService:
             raise ResourceNotFoundException
 
         return self.driver_repository.delete_driver_by_driver_id(driver_id)
-

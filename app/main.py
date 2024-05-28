@@ -45,7 +45,7 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-with open('log_conf.yaml', 'rt') as f:
+with open("log_conf.yaml", "rt") as f:
     config = yaml.safe_load(f.read())
 
 # Configure the logging module with the config file

@@ -36,7 +36,7 @@ invitation_code_service = InvitationCodeService(
 def get_all_invitation_codes(
     authenticated_user: Annotated[
         AuthenticatedUserDTO, Depends(protect_route_middlware)
-    ]
+    ],
 ) -> list[InvitationCodeDTO]:
     logger.info("GET /invitation_codes/")
     return [
@@ -64,7 +64,9 @@ def create_invitation_code(
             )
         )
     except ConflictWithExistingResourceException:
-        logger.warning(f"POST /invitation_codes/ , Invitation code already exists. {status.HTTP_409_CONFLICT}")
+        logger.warning(
+            f"POST /invitation_codes/ , Invitation code already exists. {status.HTTP_409_CONFLICT}"
+        )
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="An invitation code has already been generated for the email above",
@@ -89,13 +91,17 @@ def change_recipient_email_from_invitation_code(
             )
         )
     except ResourceNotFoundException:
-        logger.warning(f"PATCH /invitation_codes/{invitation_code} , Invitation code {invitation_code} not found. {status.HTTP_404_NOT_FOUND}")
+        logger.warning(
+            f"PATCH /invitation_codes/{invitation_code} , Invitation code {invitation_code} not found. {status.HTTP_404_NOT_FOUND}"
+        )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Invitation code not found",
         )
     except ConflictWithExistingResourceException:
-        logger.warning(f"PATCH /invitation_codes/{invitation_code}, Invitation code already exists. {status.HTTP_409_CONFLICT}")
+        logger.warning(
+            f"PATCH /invitation_codes/{invitation_code}, Invitation code already exists. {status.HTTP_409_CONFLICT}"
+        )
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="An invitation code has already been generated for the email above",
@@ -117,7 +123,9 @@ def delete_invitation_code(
             code=invitation_code, authenticated_user_id=authenticated_user.id
         )
     except ResourceNotFoundException:
-        logger.warning(f"DELETE /invitation_codes/{invitation_code} , Invitation code {invitation_code} not found. {status.HTTP_404_NOT_FOUND}")
+        logger.warning(
+            f"DELETE /invitation_codes/{invitation_code} , Invitation code {invitation_code} not found. {status.HTTP_404_NOT_FOUND}"
+        )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Invitation code not found",

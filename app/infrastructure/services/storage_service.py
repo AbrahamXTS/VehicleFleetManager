@@ -4,14 +4,12 @@ from app.domain.exceptions.invalid_file_exception import InvalidFileException
 from app.infrastructure.services.base64_service import Base64Service
 
 
-class StorageService():
+class StorageService:
     def __init__(
-        self,
-        base64_service: Base64Service,
-        base_directory: str = None
+        self, base64_service: Base64Service, base_directory: str = None
     ) -> None:
         self.base64_service = base64_service
-        self.base_directory = base_directory if base_directory else ''
+        self.base_directory = base_directory if base_directory else ""
 
     def create_directory(self, path: str):
         directory = os.path.dirname(path)
@@ -23,7 +21,7 @@ class StorageService():
         image_data = self.base64_service.decode(base64_image)
         try:
             self.create_directory(save_path)
-            with open(save_path, 'wb') as file:
+            with open(save_path, "wb") as file:
                 file.write(image_data)
             return save_path
         except FileNotFoundError:
@@ -34,7 +32,7 @@ class StorageService():
     def read_file_as_bytes(self, path: str):
         save_path = os.path.join(self.base_directory, path)
         try:
-            with open(save_path, 'rb') as file:
+            with open(save_path, "rb") as file:
                 file_bytes = file.read()
             return file_bytes
         except FileNotFoundError:

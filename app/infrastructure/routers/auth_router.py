@@ -40,7 +40,7 @@ auth_service = AuthService(
 
 @auth_router.post("/login", status_code=status.HTTP_200_OK)
 def login_user(
-    user_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+    user_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> AuthResponseDTO:
     try:
         logger.info("POST /login/")
@@ -53,7 +53,9 @@ def login_user(
             user=map_user_model_to_user_logged_dto(user),
         )
     except InvalidCredentialsException:
-        logger.warning(f"POST /login/ , Invalid credentials. {status.HTTP_401_UNAUTHORIZED}")
+        logger.warning(
+            f"POST /login/ , Invalid credentials. {status.HTTP_401_UNAUTHORIZED}"
+        )
         raise HTTPException(
             headers={"WWW-Authenticate": "Bearer"},
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -70,13 +72,17 @@ def signup_user(candidate: CandidateDTO) -> AuthenticatedUserDTO:
             auth_service.signup(map_candidate_dto_to_candidate_model(candidate))
         )
     except InvalidCredentialsException:
-        logger.warning(f"POST /signup/ , Invalid credentials. {status.HTTP_401_UNAUTHORIZED}")
+        logger.warning(
+            f"POST /signup/ , Invalid credentials. {status.HTTP_401_UNAUTHORIZED}"
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid invitation code",
         )
     except ConflictWithExistingResourceException:
-        logger.warning(f"POST /signup/ , Email address already in use. {status.HTTP_409_CONFLICT}")
+        logger.warning(
+            f"POST /signup/ , Email address already in use. {status.HTTP_409_CONFLICT}"
+        )
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="This email address is already in use",

@@ -9,6 +9,7 @@ from app.domain.exceptions.resource_not_found_exception import ResourceNotFoundE
 from app.domain.models.invitation_code_model import InvitationCodeModel
 import logging
 
+
 class InvitationCodeService:
     def __init__(
         self,
@@ -34,7 +35,9 @@ class InvitationCodeService:
         ) or self.invitation_code_repository.get_invitation_code_by_email(
             recipient_email
         ):
-            self.logger.warning(f"Conflict: User with email {recipient_email} already exists")
+            self.logger.warning(
+                f"Conflict: User with email {recipient_email} already exists"
+            )
             raise ConflictWithExistingResourceException
         self.logger.debug(f"Creating invitation code for email: {recipient_email}")
         return self.invitation_code_repository.save_invitation_code(
@@ -61,7 +64,9 @@ class InvitationCodeService:
         ) or self.invitation_code_repository.get_invitation_code_by_email(
             recipient_email
         ):
-            self.logger.warning(f"Conflict: User with email {recipient_email} already exists")
+            self.logger.warning(
+                f"Conflict: User with email {recipient_email} already exists"
+            )
             raise ConflictWithExistingResourceException
 
         self.logger.debug(f"Saving updated invitation code with code: {code}")

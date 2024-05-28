@@ -27,6 +27,7 @@ driver_service = DriverService(
 )
 logger = logging.getLogger(__name__)
 
+
 @driver_router.get("/{driver_id}", status_code=status.HTTP_200_OK)
 def get_driver_by_driver_id(driver_id: int) -> DriverDTO:
     try:
@@ -35,7 +36,9 @@ def get_driver_by_driver_id(driver_id: int) -> DriverDTO:
             driver_service.get_driver_by_driver_id(driver_id)
         )
     except ResourceNotFoundException:
-        logger.warning(f"GET /driver/{driver_id} , Driver not found. {status.HTTP_404_NOT_FOUND}")
+        logger.warning(
+            f"GET /driver/{driver_id} , Driver not found. {status.HTTP_404_NOT_FOUND}"
+        )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Driver not found",
@@ -62,7 +65,9 @@ def create_driver(driver_request_dto: DriverRequestDTO) -> DriverDTO:
             )
         )
     except ConflictWithExistingResourceException:
-        logger.warning(f"POST driver/ , Driver already exists. {status.HTTP_409_CONFLICT}")
+        logger.warning(
+            f"POST driver/ , Driver already exists. {status.HTTP_409_CONFLICT}"
+        )
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="A driver with the curp entered is already registered",
@@ -93,7 +98,9 @@ def delete_driver(driver_id: int) -> None:
         logger.info(f"DELETE /driver/{driver_id}")
         driver_service.delete_driver_by_driver_id(driver_id)
     except ResourceNotFoundException:
-        logger.warning(f"DELETE /driver/{driver_id} , Driver with id {driver_id} not found. {status.HTTP_404_NOT_FOUND}")
+        logger.warning(
+            f"DELETE /driver/{driver_id} , Driver with id {driver_id} not found. {status.HTTP_404_NOT_FOUND}"
+        )
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Driver not found",

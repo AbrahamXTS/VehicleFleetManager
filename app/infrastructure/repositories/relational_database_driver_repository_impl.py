@@ -16,7 +16,9 @@ class RelationalDatabaseDriverRepositoryImpl(DriverRepository):
         self.logger = logging.getLogger(__name__)
 
     def get_driver_by_driver_id(self, driver_id: int) -> DriverModel | None:
-        self.logger.info(f"Method get_driver_by_driver_id(), Getting driver with ID: {driver_id}")
+        self.logger.info(
+            f"Method get_driver_by_driver_id(), Getting driver with ID: {driver_id}"
+        )
         with Session(db_engine) as session:
             driver_entity = session.exec(
                 select(Driver).where(Driver.id == driver_id)
@@ -30,7 +32,9 @@ class RelationalDatabaseDriverRepositoryImpl(DriverRepository):
                 return None
 
     def get_driver_by_curp(self, curp: str) -> DriverModel | None:
-        self.logger.info(f"Method get_driver_by_curp(), Getting driver with CURP: {curp}")
+        self.logger.info(
+            f"Method get_driver_by_curp(), Getting driver with CURP: {curp}"
+        )
         with Session(db_engine) as session:
             driver_entity = session.exec(
                 select(Driver).where(Driver.curp == curp)
@@ -43,7 +47,9 @@ class RelationalDatabaseDriverRepositoryImpl(DriverRepository):
     def get_all_drivers(self) -> list[DriverModel]:
         with Session(db_engine) as session:
             drivers_entity = session.exec(select(Driver)).all()
-            self.logger.info(f"Method get_all_drivers(), Retrieved {len(drivers_entity)} drivers")
+            self.logger.info(
+                f"Method get_all_drivers(), Retrieved {len(drivers_entity)} drivers"
+            )
             self.logger.debug(f"Drivers: {drivers_entity}")
             return [
                 map_driver_entity_to_driver_model(driver) for driver in drivers_entity
@@ -77,7 +83,9 @@ class RelationalDatabaseDriverRepositoryImpl(DriverRepository):
             return map_driver_entity_to_driver_model(driver_entity)
 
     def delete_driver_by_driver_id(self, driver_id: int) -> None:
-        self.logger.info(f"Method delete_driver_by_driver_id(), Deleting driver with ID: {driver_id}")
+        self.logger.info(
+            f"Method delete_driver_by_driver_id(), Deleting driver with ID: {driver_id}"
+        )
         with Session(db_engine) as session:
             driver_entity = session.exec(
                 select(Driver).where(Driver.id == driver_id)

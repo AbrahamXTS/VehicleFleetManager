@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-import logging 
+import logging
 
 from app.application.repositories.user_repository import UserRepository
 from app.domain.models.invitation_code_model import InvitationCodeModel
@@ -24,7 +24,9 @@ class RelationalDatabaseUserRepositoryImpl(UserRepository):
             user_entity = session.exec(select(User).where(User.email == email)).first()
 
             if user_entity:
-                self.logger.info(f"Method get_user_by_email(), User with email {email} found")
+                self.logger.info(
+                    f"Method get_user_by_email(), User with email {email} found"
+                )
                 return map_user_entity_to_user_model(user_entity)
 
     def get_all_users(self) -> list[UserModel]:
@@ -53,9 +55,13 @@ class RelationalDatabaseUserRepositoryImpl(UserRepository):
                         invitation_code_entity
                     )
                 )
-        
-        self.logger.info(f"Method get_invitation_codes_created_by_user_id(), Retrieved invitation codes for {user_id}")
-        self.logger.debug(f"Invitation codes: {invitation_code_entity.code} {invitation_code_entity.email}")
+
+        self.logger.info(
+            f"Method get_invitation_codes_created_by_user_id(), Retrieved invitation codes for {user_id}"
+        )
+        self.logger.debug(
+            f"Invitation codes: {invitation_code_entity.code} {invitation_code_entity.email}"
+        )
         return invitation_codes
 
     def save_user(self, user: UserModel) -> UserModel:
@@ -75,7 +81,9 @@ class RelationalDatabaseUserRepositoryImpl(UserRepository):
             session.add(user_entity)
             session.commit()
             session.refresh(user_entity)
-            self.logger.info(f"Method save_user(), User saved: {user.name} {user.last_name}")
+            self.logger.info(
+                f"Method save_user(), User saved: {user.name} {user.last_name}"
+            )
             self.logger.debug(f"User saved: {user_entity.name} {user_entity.last_name}")
             return map_user_entity_to_user_model(user_entity)
 
