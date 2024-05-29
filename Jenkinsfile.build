@@ -28,10 +28,10 @@ pipeline {
                 script {
                     sh '''
                         cat <<EOF > .env
-                        DATABASE_USER=${DATABASE_USER}
-                        DATABASE_PASSWORD=${DATABASE_PASSWORD}
-                        DATABASE_HOST=${DATABASE_HOST}
-                        DATABASE_NAME=${DATABASE_NAME}
+                        MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+                        MYSQL_DATABASE=${MYSQL_DATABASE}
+                        MYSQL_USER=${MYSQL_USER}
+                        MYSQL_PASSWORD=${MYSQL_PASSWORD}
                         JWT_SECRET_KEY=${JWT_SECRET_KEY}
                         JWT_ALGORITHM=${JWT_ALGORITHM}
                         EOF
