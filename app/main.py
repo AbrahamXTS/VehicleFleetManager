@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.infrastructure.configs.initial_data import add_default_user
 from app.infrastructure.configs.sql_database import create_db_and_tables
+from app.infrastructure.middlewares.server_error_middleware import ServerErrorMiddleware
 
 from .infrastructure.docs.openapi_tags import openapi_tags
 from .infrastructure.routers.auth_router import auth_router
@@ -56,6 +57,8 @@ app.add_middleware(
     allow_headers=["*"],
     allow_credentials=True,
 )
+
+app.add_middleware(ServerErrorMiddleware)
 
 logger.remove(0)
 logger.add(
