@@ -44,7 +44,7 @@ class DriverAssignmentService:
     def assign_driver_to_vehicle(
         self, driver_assignment: DriverAssignmentModel
     ) -> DriverAssignmentModel:
-        logger.debug("Method called: assign_driver_to_vehicle()")
+        logger.debug("Method called: driver_assignment_service.assign_driver_to_vehicle()")
         logger.debug(f"Params passed: {driver_assignment.__dict__}")
         if self.driver_assignment_repository.get_active_driver_assignments_with_driver_id_or_vehicle_id_at_date(
             driver_assignment.driver_id,
@@ -67,7 +67,7 @@ class DriverAssignmentService:
     def get_driver_assignments(
         self, only_actives: bool = False, travel_date: date | None = None
     ) -> list[DriverAssignmentModel]:
-        logger.debug("Method called: get_driver_assignments()")
+        logger.debug("Method called: driver_assignment_service.get_driver_assignments()")
         logger.debug(f"Params passed: {only_actives}, {travel_date}")
         return self.driver_assignment_repository.get_driver_assignments(
             only_actives, travel_date
@@ -76,7 +76,7 @@ class DriverAssignmentService:
     def get_driver_assignment(
         self, driver_id: int, vehicle_id: int, travel_date: date
     ) -> DriverAssignmentModel:
-        logger.debug("Method called: get_driver_assignment()")
+        logger.debug("Method called: driver_assignment_service.get_driver_assignment()")
         logger.debug(f"Params passed: {driver_id}, {vehicle_id}, {travel_date}")
         driver_assignment = self.driver_assignment_repository.get_driver_assignment(
             driver_id, vehicle_id, travel_date
@@ -88,7 +88,7 @@ class DriverAssignmentService:
     def update_driver_assignment(
         self, driver_assignment: DriverAssignmentModel
     ) -> DriverAssignmentModel:
-        logger.debug("Method called: update_driver_assignment()")
+        logger.debug("Method called: driver_assignment_service.update_driver_assignment()")
         logger.debug(f"Params passed: {driver_assignment.__dict__}")
         if assignment := self.get_driver_assignment(
             driver_assignment.driver_id,
@@ -116,7 +116,7 @@ class DriverAssignmentService:
     def set_driver_assignment_as_inactive(
         self, driver_id: int, vehicle_id: int, travel_date: date
     ) -> None:
-        logger.debug("Method called: set_driver_assignment_as_inactive()")
+        logger.debug("Method called: driver_assignment_service.set_driver_assignment_as_inactive()")
         logger.debug(f"Params passed: {driver_id}, {vehicle_id}, {travel_date}")
         if self.get_driver_assignment(driver_id, vehicle_id, travel_date):
             self.driver_assignment_repository.set_driver_assignment_as_inactive(
@@ -126,7 +126,7 @@ class DriverAssignmentService:
     def get_assignments_history_for_driver(
         self, driver_id: int
     ) -> list[DriverAssignmentModel]:
-        logger.debug("Method called: get_assignments_history_for_driver()")
+        logger.debug("Method called: driver_assignment_service.get_assignments_history_for_driver()")
         logger.debug(f"Params passed: {driver_id}")
         return self.driver_assignment_repository.get_all_assignments_for_driver(
             driver_id
@@ -135,7 +135,7 @@ class DriverAssignmentService:
     def get_assignments_history_for_vehicle(
         self, vehicle_id: int
     ) -> list[DriverAssignmentModel]:
-        logger.debug("Method called: get_assignments_history_for_vehicle()")
+        logger.debug("Method called: driver_assignment_service.get_assignments_history_for_vehicle()")
         logger.debug(f"Params passed: {vehicle_id}")
         return self.driver_assignment_repository.get_all_assignments_for_vehicle(
             vehicle_id

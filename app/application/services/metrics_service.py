@@ -21,7 +21,7 @@ class MetricsService:
         self.driver_assignment_repository = driver_assignment_repository
 
     def get_metrics(self):
-        logger.debug("Method called: get_metrics()")
+        logger.debug("Method called: metrics_service.get_metrics()")
         return {
             "number_of_vehicles": self.vehicle_repository.get_number_of_vehicles(),
             "number_of_users": self.user_repository.get_number_of_users(),

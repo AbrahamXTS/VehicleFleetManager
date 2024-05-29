@@ -22,14 +22,14 @@ class InvitationCodeService:
     def get_all_invitation_codes_by_user_id(
         self, user_id: int
     ) -> list[InvitationCodeModel]:
-        logger.debug("Method called: get_all_invitation_codes_by_user_id()")
+        logger.debug("Method called: invitation_code_service.get_all_invitation_codes_by_user_id()")
         logger.debug(f"Params passed: {user_id}")
         return self.user_repository.get_invitation_codes_created_by_user_id(user_id)
 
     def create_invitation_code(
         self, recipient_email: str, authenticated_user_id: int
     ) -> InvitationCodeModel:
-        logger.debug("Method called: create_invitation_code()")
+        logger.debug("Method called: invitation_code_service.create_invitation_code()")
         logger.debug(f"Params passed: {recipient_email} and {authenticated_user_id}")
         if self.user_repository.get_user_by_email(
             recipient_email
@@ -46,7 +46,7 @@ class InvitationCodeService:
     def update_recipient_email_from_invitation_code(
         self, code: str, recipient_email: str, authenticated_user_id: int
     ) -> InvitationCodeModel:
-        logger.debug("Method called: update_recipient_email_from_invitation_code()")
+        logger.debug("Method called: invitation_code_service.update_recipient_email_from_invitation_code()")
         logger.debug(f"Params passed: {code}, {recipient_email} and {authenticated_user_id}")
         if code not in [
             invitation_code.code
@@ -72,7 +72,7 @@ class InvitationCodeService:
     def delete_invitation_code_by_code(
         self, code: str, authenticated_user_id: int
     ) -> None:
-        logger.debug("Method called: delete_invitation_code_by_code()")
+        logger.debug("Method called: invitation_code_service.delete_invitation_code_by_code()")
         logger.debug(f"Params passed: {code} and {authenticated_user_id}")
         if code not in [
             invitation_code.code

@@ -16,25 +16,27 @@ from app.infrastructure.mappers.invitation_code_mappers import (
 class RelationalDatabaseInvitationCodeRepositoryImpl(InvitationCodeRepository):
 
     def get_invitation_code_by_code(self, code: str) -> InvitationCodeModel | None:
+        logger.debug("Method called: relational_database_invitation_code_repository_impl.get_invitation_code_by_code()")
+        logger.debug(f"Params passed: {code}")
         with Session(db_engine) as session:
             invitation_code_entity = session.exec(
                 select(InvitationCode).where(InvitationCode.code == code)
             ).first()
 
             if invitation_code_entity:
-                logger.debug(f"Method get_invitation_code_by_code(), Retrieved invitation code with code: {code}")
                 return map_invitation_code_entity_to_invitation_code_model(
                     invitation_code_entity
                 )
 
     def get_invitation_code_by_email(self, email: str) -> InvitationCodeModel | None:
+        logger.debug("Method called: relational_database_invitation_code_repository_impl.get_invitation_code_by_email()")
+        logger.debug(f"Params passed: {email}")
         with Session(db_engine) as session:
             invitation_code_entity = session.exec(
                 select(InvitationCode).where(InvitationCode.email == email)
             ).first()
 
             if invitation_code_entity:
-                logger.debug(f"Method get_invitation_code_by_email(), Retrieved invitation code with email: {email}")
                 return map_invitation_code_entity_to_invitation_code_model(
                     invitation_code_entity
                 )
@@ -42,6 +44,8 @@ class RelationalDatabaseInvitationCodeRepositoryImpl(InvitationCodeRepository):
     def get_invitation_code_by_code_and_email(
         self, code: str, email: str
     ) -> InvitationCodeModel | None:
+        logger.debug("Method called: relational_database_invitation_code_repository_impl.get_invitation_code_by_code_and_email()")
+        logger.debug(f"Params passed: {code} and {email}")
         with Session(db_engine) as session:
             invitation_code_entity = session.exec(
                 select(InvitationCode).where(
@@ -50,7 +54,6 @@ class RelationalDatabaseInvitationCodeRepositoryImpl(InvitationCodeRepository):
             ).first()
 
             if invitation_code_entity:
-                logger.debug(f"Method get_invitation_code_by_code_and_email(), Retrieved invitation code with code {code} and email {email}")
                 return map_invitation_code_entity_to_invitation_code_model(
                     invitation_code_entity
                 )
@@ -58,6 +61,8 @@ class RelationalDatabaseInvitationCodeRepositoryImpl(InvitationCodeRepository):
     def save_invitation_code(
         self, invitation_code: InvitationCodeModel
     ) -> InvitationCodeModel:
+        logger.debug("Method called: relational_database_invitation_code_repository_impl.save_invitation_code()")
+        logger.debug(f"Params passed: {invitation_code.__dict__}")
         with Session(db_engine) as session:
             invitation_code_entity = None
 
@@ -77,12 +82,13 @@ class RelationalDatabaseInvitationCodeRepositoryImpl(InvitationCodeRepository):
             session.add(invitation_code_entity)
             session.commit()
             session.refresh(invitation_code_entity)
-            logger.debug(f"Method save_invitation_code(), Invitation code: {invitation_code_entity.code} saved")
             return map_invitation_code_entity_to_invitation_code_model(
                 invitation_code_entity
             )
 
     def delete_invitation_code_by_code(self, code: str) -> None:
+        logger.debug("Method called: relational_database_invitation_code_repository_impl.delete_invitation_code_by_code()")
+        logger.debug(f"Params passed: {code}")
         with Session(db_engine) as session:
             invitation_code_entity = session.exec(
                 select(InvitationCode).where(InvitationCode.code == code)
@@ -90,4 +96,3 @@ class RelationalDatabaseInvitationCodeRepositoryImpl(InvitationCodeRepository):
 
             session.delete(invitation_code_entity)
             session.commit()
-            logger.debug(f"Method delete_invitation_code_by_code(), Invitation code with code {code} deleted")

@@ -18,27 +18,28 @@ from app.infrastructure.mappers.user_mappers import (
 class RelationalDatabaseUserRepositoryImpl(UserRepository):
 
     def get_user_by_email(self, email: str) -> UserModel | None:
+        logger.debug("Method called: relational_database_user_repository_impl.get_user_by_email()")
+        logger.debug(f"Params passed: {email}")
         with Session(db_engine) as session:
             user_entity = session.exec(select(User).where(User.email == email)).first()
 
             if user_entity:
-                logger.debug(
-                    f"Method get_user_by_email(), User with email {email} found"
-                )
                 return map_user_entity_to_user_model(user_entity)
 
     def get_all_users(self) -> list[UserModel]:
+        logger.debug("Method called: relational_database_user_repository_impl.get_all_users()")
         users = []
 
         with Session(db_engine) as session:
             for user_entity in session.exec(select(User)).all():
                 users.append(map_user_entity_to_user_model(user_entity))
-        logger.debug(f"Method get_all_users(), Retrieved {len(users)} users")
         return users
 
     def get_invitation_codes_created_by_user_id(
         self, user_id: int
     ) -> list[InvitationCodeModel]:
+        logger.debug("Method called: relational_database_user_repository_impl.get_invitation_codes_created_by_user_id()")
+        logger.debug(f"Params passed: {user_id}")
         invitation_codes = []
 
         with Session(db_engine) as session:
@@ -53,12 +54,11 @@ class RelationalDatabaseUserRepositoryImpl(UserRepository):
                     )
                 )
 
-        logger.debug(
-            f"Method get_invitation_codes_created_by_user_id(), Retrieved invitation codes for {user_id}"
-        )
         return invitation_codes
 
     def save_user(self, user: UserModel) -> UserModel:
+        logger.debug("Method called: relational_database_user_repository_impl.save_user()")
+        logger.debug(f"Params passed: {user.__dict__}")
         with Session(db_engine) as session:
             user_entity = None
 
@@ -75,21 +75,19 @@ class RelationalDatabaseUserRepositoryImpl(UserRepository):
             session.add(user_entity)
             session.commit()
             session.refresh(user_entity)
-            logger.debug(
-                f"Method save_user(), User saved: {user.name} {user.last_name}"
-            )
             return map_user_entity_to_user_model(user_entity)
 
     def delete_user_by_user_id(self, user_id: int) -> None:
+        logger.debug("Method called: relational_database_user_repository_impl.delete_user_by_user_id()")
+        logger.debug(f"Params passed: {user_id}")
         with Session(db_engine) as session:
             user_entity = session.exec(select(User).where(User.id == user_id)).one()
 
             session.delete(user_entity)
             session.commit()
-            logger.debug("Method delete_user_by_user_id()")
 
     def get_number_of_users(self) -> int:
+        logger.debug("Method called: relational_database_user_repository_impl.get_number_of_users()")
         with Session(db_engine) as session:
             number_users = len(session.exec(select(User)).all())
-        logger.debug(f"Method get_number_of_users(), Retrieved {number_users} users")
         return number_users

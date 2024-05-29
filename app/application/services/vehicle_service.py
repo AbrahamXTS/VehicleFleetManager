@@ -23,25 +23,25 @@ class VehicleService:
         self.storage_service = storage_service
 
     def get_vehicle_by_id(self, id: int) -> VehicleModel | None:
-        logger.debug("Method called: get_vehicle_by_id()")
+        logger.debug("Method called: vehicle_service.get_vehicle_by_id()")
         logger.debug(f"Params passed: {id}")
         if vehicle := self.vehicle_repository.get_vehicle_by_id(id=id):
             return vehicle
         raise ResourceNotFoundException
 
     def get_all_vehicles(self) -> List[VehicleModel]:
-        logger.debug("Method called: get_all_vehicles()")
+        logger.debug("Method called: vehicle_service.get_all_vehicles()")
         return self.vehicle_repository.get_vehicles()
 
     def remove_vehicle_by_id(self, id: int):
-        logger.debug("Method called: remove_vehicle_by_id()")
+        logger.debug("Method called: vehicle_service.remove_vehicle_by_id()")
         logger.debug(f"Params passed: {id}")
         if not self.vehicle_repository.get_vehicle_by_id(id=id):
             raise ResourceNotFoundException
         return self.vehicle_repository.remove_vehicle_by_id(id=id)
 
     def is_vehicle_duplicate(self, vehicle: VehicleModel, id: int | None = None):
-        logger.debug("Method called: is_vehicle_duplicate()")
+        logger.debug("Method called: vehicle_service.is_vehicle_duplicate()")
         logger.debug(f"Params passed: {vehicle.__dict__} and ID: {id}")
         found = self.vehicle_repository.get_vehicle_by_vin(
             vin=vehicle.vin
@@ -51,7 +51,7 @@ class VehicleService:
         return False
 
     def update_vehicle(self, id: int, vehicle_update: VehicleModel):
-        logger.debug("Method called: update_vehicle()")
+        logger.debug("Method called: vehicle_service.update_vehicle()")
         logger.debug(f"Params passed: ID: {id} and {vehicle_update.__dict__}")
         if not self.get_vehicle_by_id(id=id):
             raise ResourceNotFoundException
@@ -65,7 +65,7 @@ class VehicleService:
         return self.vehicle_repository.get_vehicle_by_id(id)
 
     def create_vehicle(self, vehicle: VehicleModel):
-        logger.debug("Method called: create_vehicle()")
+        logger.debug("Method called: vehicle_service.create_vehicle()")
         logger.debug(f"Params passed: {vehicle.__dict__}")
         vehicle.entry_date = datetime.now(timezone.utc)
         if self.is_vehicle_duplicate(vehicle=vehicle):
@@ -76,6 +76,6 @@ class VehicleService:
         return self.vehicle_repository.create_vehicle(vehicle=vehicle)
 
     def download_vehicle_picture(self, vin: str):
-        logger.debug("Method called: download_vehicle_picture()")
+        logger.debug("Method called: vehicle_service.download_vehicle_picture()")
         logger.debug(f"Params passed: {vin}")
         return self.storage_service.read_file_as_bytes(f"{vin}.jpg")

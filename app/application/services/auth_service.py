@@ -27,7 +27,7 @@ class AuthService:
         self.user_repository = user_repository
 
     def login(self, email: str, password: str) -> UserModel:
-        logger.debug("Method called: login()")
+        logger.debug("Method called: auth_service.login()")
         logger.debug(f"Params passed: {email}, {password}")
         user = self.user_repository.get_user_by_email(email)
         if not user or not self.password_encryptor.verify_password_hash(
@@ -38,7 +38,7 @@ class AuthService:
         return user
 
     def signup(self, candidate: CandidateModel) -> UserModel:
-        logger.debug("Method called: signup()")
+        logger.debug("Method called: auth_service.signup()")
         logger.debug(f"Params passed: {candidate.__dict__}")
         invitation_code = (
             self.invitation_code_repository.get_invitation_code_by_code_and_email(
