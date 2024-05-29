@@ -1,12 +1,12 @@
 from contextlib import asynccontextmanager
-from fastapi.responses import JSONResponse
 from loguru import logger
 from dotenv import load_dotenv
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.infrastructure.configs.initial_data import add_default_user
 from app.infrastructure.configs.sql_database import create_db_and_tables
+from app.infrastructure.middlewares.server_error_middleware import ServerErrorMiddleware
 
 from .infrastructure.docs.openapi_tags import openapi_tags
 from .infrastructure.routers.auth_router import auth_router
@@ -58,16 +58,7 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-@app.add_middleware("http")
-async def log_server_error_middleware(request: Request, call_next):
-    try:
-        response = await call_next(request)
-        if response.status_code >= 500:
-            logger.error(f"API RESPONSE {response.status_code} - {request.method} {request.url} - {response.body.decode('utf-8')}")
-        return response
-    except Exception as e:
-        logger.error(f"API RESPONSE 500 - {request.method} {request.url} - {str(e)}")
-        return JSONResponse(status_code=500, content={"error": str(e)})
+app.add_middleware(ServerErrorMiddleware)
 
 logger.remove(0)
 logger.add(
