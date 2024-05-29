@@ -39,7 +39,7 @@ class DriverAssignmentRepository:
         self,
         location: LocationModel,
         travel_date: date,
-        exclude_assignment: DriverAssignmentIdModel,
+        exclude_assignment: DriverAssignmentIdModel | None,
     ) -> DriverAssignmentModel:
         raise NotImplementedError(
             "Method get_driver_assignment_by_destination_location_at_date hasn't been implemented yet."

@@ -110,10 +110,10 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
         self,
         location: LocationModel,
         travel_date: date,
-        exclude_assignment: DriverAssignmentIdModel,
+        exclude_assignment: DriverAssignmentIdModel | None,
     ) -> DriverAssignmentModel:
         logger.debug("Method called: relational_database_driver_assignment_repository_impl.get_active_driver_assignment_by_destination_location_at_date()")
-        logger.debug(f"Params passed: {location.__dict__}, {travel_date}, {exclude_assignment.__dict__}")
+        logger.debug(f"Params passed: {location.__dict__}, {travel_date}")
         with Session(db_engine) as session:
             statement = select(DriverAssignment).where(
                 DriverAssignment.destination_location_latitude == location.latitude,
