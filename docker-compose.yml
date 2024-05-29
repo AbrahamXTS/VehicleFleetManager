@@ -4,6 +4,8 @@ services:
   db:
     container_name: ${MYSQL_DATABASE}
     image: mariadb:11.3-jammy
+    ports:
+      - 3306:3306
     volumes:
       - vm-db-volume:/var/lib/mysql
     environment:
@@ -12,6 +14,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     restart: always
+
   api-service:
     depends_on:
       - db
@@ -28,8 +31,6 @@ services:
       DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_DATABASE}:3306/${MYSQL_DATABASE}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ALGORITHM: ${JWT_ALGORITHM}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     restart: always
 
   elastic:
@@ -58,7 +59,6 @@ services:
     command: logstash -f /usr/share/logstash/pipeline/logstash.conf
     restart: always
     
-
   kibana:
     depends_on:
       - elastic
