@@ -13,6 +13,7 @@ class ServerErrorMiddleware(BaseHTTPMiddleware):
             response = await call_next(request)
             if response.status_code >= 500:
                 logger.error(f"API RESPONSE {response.status_code} - {request.method} {request.url} - {response.body.decode('utf-8')}")
+            return response
         except Exception as e:
             logger.error(f"API RESPONSE 500 - {request.method} {request.url} - {str(e)}")
             return JSONResponse(status_code=500, content={"error": str(e)})
