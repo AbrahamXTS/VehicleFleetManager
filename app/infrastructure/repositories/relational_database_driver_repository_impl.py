@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-import logging
+from loguru import logger
 
 from app.application.repositories.driver_repository import DriverRepository
 from app.domain.models.driver_model import DriverModel
@@ -12,51 +12,38 @@ from app.infrastructure.mappers.driver_mappers import (
 
 
 class RelationalDatabaseDriverRepositoryImpl(DriverRepository):
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
 
     def get_driver_by_driver_id(self, driver_id: int) -> DriverModel | None:
-        self.logger.info(
-            f"Method get_driver_by_driver_id(), Getting driver with ID: {driver_id}"
-        )
         with Session(db_engine) as session:
             driver_entity = session.exec(
                 select(Driver).where(Driver.id == driver_id)
             ).first()
 
             if driver_entity:
-                self.logger.debug(f"Driver: {driver_entity}")
+                logger.debug(f"Method get_driver_by_driver_id(), Retrieved driver with ID: {driver_id}")
                 return map_driver_entity_to_driver_model(driver_entity)
             else:
-                self.logger.info("Driver not found")
                 return None
 
     def get_driver_by_curp(self, curp: str) -> DriverModel | None:
-        self.logger.info(
-            f"Method get_driver_by_curp(), Getting driver with CURP: {curp}"
-        )
         with Session(db_engine) as session:
             driver_entity = session.exec(
                 select(Driver).where(Driver.curp == curp)
             ).first()
 
             if driver_entity:
-                self.logger.debug(f"Driver: {driver_entity}")
+                logger.debug(f"Method get_driver_by_curp(), Retrieved driver with CURP: {curp}")
                 return map_driver_entity_to_driver_model(driver_entity)
 
     def get_all_drivers(self) -> list[DriverModel]:
         with Session(db_engine) as session:
             drivers_entity = session.exec(select(Driver)).all()
-            self.logger.info(
-                f"Method get_all_drivers(), Retrieved {len(drivers_entity)} drivers"
-            )
-            self.logger.debug(f"Drivers: {drivers_entity}")
+            logger.debug(f"Method get_all_drivers(), Retrieved {len(drivers_entity)} drivers")
             return [
                 map_driver_entity_to_driver_model(driver) for driver in drivers_entity
             ]
 
     def save_driver(self, driver: DriverModel) -> DriverModel:
-        self.logger.info("Method save_driver()")
         with Session(db_engine) as session:
             driver_entity = None
 
@@ -79,13 +66,10 @@ class RelationalDatabaseDriverRepositoryImpl(DriverRepository):
             session.add(driver_entity)
             session.commit()
             session.refresh(driver_entity)
-            self.logger.debug(f"Driver saved: {driver_entity}")
+            logger.debug(f"Method save_driver(), Driver with ID: {driver_entity.id} saved")
             return map_driver_entity_to_driver_model(driver_entity)
 
     def delete_driver_by_driver_id(self, driver_id: int) -> None:
-        self.logger.info(
-            f"Method delete_driver_by_driver_id(), Deleting driver with ID: {driver_id}"
-        )
         with Session(db_engine) as session:
             driver_entity = session.exec(
                 select(Driver).where(Driver.id == driver_id)
@@ -93,10 +77,10 @@ class RelationalDatabaseDriverRepositoryImpl(DriverRepository):
 
             session.delete(driver_entity)
             session.commit()
-            self.logger.debug(f"Driver: {driver_entity}")
+            logger.debug(f"Method delete_driver_by_driver_id(), Driver with ID: {driver_id} deleted")
 
     def get_number_of_drivers(self) -> int:
         with Session(db_engine) as session:
             number_of_drivers = len(session.exec(select(Driver)).all())
-            self.logger.debug(f"Retrieved {number_of_drivers} drivers")
+            logger.debug(f"Method get_number_of_drivers(), Retrieved {number_of_drivers} drivers")
         return number_of_drivers
