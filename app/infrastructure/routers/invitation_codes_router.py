@@ -1,6 +1,6 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
-import logging
+from loguru import logger
 
 from app.application.services.invitation_code_service import InvitationCodeService
 from app.domain.exceptions.conflict_with_existing_resource_exception import (
@@ -23,8 +23,6 @@ from app.infrastructure.repositories.relational_database_user_repository_impl im
     RelationalDatabaseUserRepositoryImpl,
 )
 
-
-logger = logging.getLogger(__name__)
 invitation_code_router = APIRouter()
 invitation_code_service = InvitationCodeService(
     invitation_code_repository=RelationalDatabaseInvitationCodeRepositoryImpl(),
@@ -38,12 +36,14 @@ def get_all_invitation_codes(
         AuthenticatedUserDTO, Depends(protect_route_middlware)
     ],
 ) -> list[InvitationCodeDTO]:
-    logger.info("GET /invitation_codes/")
+    logger.info("API REQUEST - GET /invitation-code/")
+    invitation_codes = invitation_code_service.get_all_invitation_codes_by_user_id(
+        authenticated_user.id
+    )
+    logger.success(f"API RESPONSE {status.HTTP_200_OK} - GET /invitation-code/")
     return [
         map_invitation_code_model_to_invitation_code_dto(invitation_code)
-        for invitation_code in invitation_code_service.get_all_invitation_codes_by_user_id(
-            authenticated_user.id
-        )
+        for invitation_code in invitation_codes
     ]
 
 
@@ -55,21 +55,20 @@ def create_invitation_code(
     ],
 ) -> InvitationCodeDTO:
     try:
-        logger.info("POST /invitation_codes/")
-        logger.debug(f"Request body: {invitation_code_request_dto}")
-        return map_invitation_code_model_to_invitation_code_dto(
-            invitation_code_service.create_invitation_code(
-                recipient_email=invitation_code_request_dto.email,
-                authenticated_user_id=authenticated_user.id,
-            )
+        logger.info("API REQUEST - POST /invitation-code/")
+        logger.debug(f"Request body: {invitation_code_request_dto.model_dump()}")
+        invitation_code = invitation_code_service.create_invitation_code(
+            recipient_email=invitation_code_request_dto.email,
+            authenticated_user_id=authenticated_user.id,
         )
+        logger.success(f"API RESPONSE {status.HTTP_201_CREATED} - POST /invitation-code/")
+        return map_invitation_code_model_to_invitation_code_dto(invitation_code)
     except ConflictWithExistingResourceException:
-        logger.warning(
-            f"POST /invitation_codes/ , Invitation code already exists. {status.HTTP_409_CONFLICT}"
-        )
+        error_detail = "An invitation code has already been generated for the email above"
+        logger.warning(f"API RESPONSE {status.HTTP_409_CONFLICT} - POST /invitation-code/ - {error_detail}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="An invitation code has already been generated for the email above",
+            detail=error_detail,
         )
 
 
@@ -82,29 +81,28 @@ def change_recipient_email_from_invitation_code(
     ],
 ) -> InvitationCodeDTO:
     try:
-        logger.info(f"PATCH /invitation_codes/{invitation_code}")
-        return map_invitation_code_model_to_invitation_code_dto(
-            invitation_code_service.update_recipient_email_from_invitation_code(
-                code=invitation_code,
-                recipient_email=invitation_code_request_dto.email,
-                authenticated_user_id=authenticated_user.id,
-            )
+        logger.info(f"API REQUEST - PATCH /invitation-code/{invitation_code}")
+        logger.debug(f"Request body: {invitation_code_request_dto.model_dump()}")
+        updated_invitation_code = invitation_code_service.update_recipient_email_from_invitation_code(
+            code=invitation_code,
+            recipient_email=invitation_code_request_dto.email,
+            authenticated_user_id=authenticated_user.id,
         )
+        logger.success(f"API RESPONSE {status.HTTP_200_OK} - PATCH /invitation-code/{invitation_code}")
+        return map_invitation_code_model_to_invitation_code_dto(updated_invitation_code)
     except ResourceNotFoundException:
-        logger.warning(
-            f"PATCH /invitation_codes/{invitation_code} , Invitation code {invitation_code} not found. {status.HTTP_404_NOT_FOUND}"
-        )
+        error_detail = "Invitation code not found"
+        logger.warning(f"API RESPONSE {status.HTTP_404_NOT_FOUND} - PATCH /invitation-code/{invitation_code} - {error_detail}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Invitation code not found",
+            detail=error_detail,
         )
     except ConflictWithExistingResourceException:
-        logger.warning(
-            f"PATCH /invitation_codes/{invitation_code}, Invitation code already exists. {status.HTTP_409_CONFLICT}"
-        )
+        error_detail = "An invitation code has already been generated for the email above"
+        logger.warning(f"API RESPONSE {status.HTTP_409_CONFLICT} - PATCH /invitation-code/{invitation_code} - {error_detail}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="An invitation code has already been generated for the email above",
+            detail=error_detail,
         )
 
 
@@ -118,15 +116,15 @@ def delete_invitation_code(
     ],
 ) -> None:
     try:
-        logger.info(f"DELETE /invitation_codes/{invitation_code}")
+        logger.info(f"API REQUEST - DELETE /invitation-code/{invitation_code}")
         invitation_code_service.delete_invitation_code_by_code(
             code=invitation_code, authenticated_user_id=authenticated_user.id
         )
+        logger.success(f"API RESPONSE {status.HTTP_204_NO_CONTENT} - DELETE /invitation-code/{invitation_code}")
     except ResourceNotFoundException:
-        logger.warning(
-            f"DELETE /invitation_codes/{invitation_code} , Invitation code {invitation_code} not found. {status.HTTP_404_NOT_FOUND}"
-        )
+        error_detail = "Invitation code not found"
+        logger.warning(f"API RESPONSE {status.HTTP_404_NOT_FOUND} - DELETE /invitation-code/{invitation_code} - {error_detail}")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Invitation code not found",
+            detail=error_detail,
         )
