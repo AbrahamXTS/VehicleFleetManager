@@ -7,7 +7,6 @@ pipeline {
     stages {
         stage('Copy archive') {
             steps {
-                cleanWs()
                 copyArtifacts(projectName: 'proy-devops-back-build')
             }
         }
