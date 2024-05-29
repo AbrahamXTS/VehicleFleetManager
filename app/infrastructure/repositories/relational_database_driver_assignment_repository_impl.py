@@ -8,7 +8,7 @@ from app.domain.models.driver_assignment import (
     DriverAssignmentIdModel,
 )
 from app.infrastructure.configs.sql_database import db_engine
-import logging
+from loguru import logger
 
 from app.application.repositories.driver_assingment_repository import (
     DriverAssignmentRepository,
@@ -21,13 +21,12 @@ from app.infrastructure.mappers.driver_assignment_mappers import (
 
 
 class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepository):
-    def __init__(self):
-        self.logger = logging.getLogger(__name__)
 
     def assign_driver_to_vehicle(
         self, driver_assignment: DriverAssignmentModel
     ) -> DriverAssignmentModel:
-        self.logger.info("Method assign_driver_to_vehicle()")
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.assign_driver_to_vehicle()")
+        logger.debug(f"Params passed: {driver_assignment.__dict__}")
         with Session(db_engine) as session:
             driver_assignment_entity = (
                 map_driver_assignment_model_to_driver_assignment_entity(
@@ -37,14 +36,8 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
             session.add(driver_assignment_entity)
             try:
                 session.commit()
-                self.logger.debug(
-                    f"Driver {driver_assignment.driver_id} assigned to vehicle {driver_assignment.vehicle_id} on {driver_assignment.travel_date}"
-                )
             except IntegrityError:
                 session.rollback()
-                self.logger.warning(
-                    f"Driver {driver_assignment.driver_id} already assigned to vehicle {driver_assignment.vehicle_id} on {driver_assignment.travel_date}"
-                )
                 raise ResourceNotFoundException("Driver or vehicle to assign not found")
             else:
                 session.refresh(driver_assignment_entity)
@@ -55,7 +48,8 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
     def get_driver_assignments(
         self, only_actives: bool, travel_date: date | None
     ) -> list[DriverAssignmentModel]:
-        self.logger.info("Method get_driver_assignments()")
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.get_driver_assignments()")
+        logger.debug(f"Params passed: {only_actives} and {travel_date}")
         with Session(db_engine) as session:
             statement = select(DriverAssignment)
             if travel_date:
@@ -68,7 +62,6 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                     DriverAssignment.creation_date.desc(),
                 )
             ).all()
-            self.logger.debug(f"Driver assignments: {driver_assignment_entities}")
             return [
                 map_driver_assignment_entity_to_driver_assignment_model(
                     driver_assignment_entity
@@ -79,15 +72,13 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
     def get_driver_assignment(
         self, driver_id: int, vehicle_id: int, travel_date: date
     ) -> DriverAssignmentModel:
-        self.logger.info(
-            f"Method get_driver_assignment(), Getting driver assignment for driver {driver_id} and vehicle {vehicle_id} on {travel_date}"
-        )
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.get_driver_assignment()")
+        logger.debug(f"Params passed: {driver_id}, {vehicle_id}, {travel_date}")
         with Session(db_engine) as session:
             driver_assignment_entity = session.get(
                 DriverAssignment, (driver_id, vehicle_id, travel_date)
             )
             if driver_assignment_entity:
-                self.logger.debug(f"Driver assignment: {driver_assignment_entity}")
                 return map_driver_assignment_entity_to_driver_assignment_model(
                     driver_assignment_entity
                 )
@@ -95,10 +86,9 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
     def get_active_driver_assignments_with_driver_id_or_vehicle_id_at_date(
         self, driver_id: int, vehicle_id: int, travel_date: date
     ) -> list[DriverAssignmentModel]:
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.get_active_driver_assignments_with_driver_id_or_vehicle_id_at_date()")
+        logger.debug(f"Params passed: {driver_id}, {vehicle_id}, {travel_date}")
         with Session(db_engine) as session:
-            self.logger.info(
-                f"Method get_active_driver_assignments_with_driver_id_or_vehicle_id_at_date(), Getting active driver assignments for driver {driver_id} or vehicle {vehicle_id} on {travel_date}"
-            )
             driver_assignment_entities = session.exec(
                 select(DriverAssignment).where(
                     or_(
@@ -109,7 +99,6 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                     DriverAssignment.active,
                 )
             ).all()
-            self.logger.debug(f"Driver assignments: {driver_assignment_entities}")
         return [
             map_driver_assignment_entity_to_driver_assignment_model(
                 driver_assignment_entity
@@ -123,9 +112,8 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
         travel_date: date,
         exclude_assignment: DriverAssignmentIdModel,
     ) -> DriverAssignmentModel:
-        self.logger.info(
-            f"Method get_active_driver_assignment_by_destination_location_at_date(), Getting active driver assignment by destination location {location} on {travel_date}"
-        )
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.get_active_driver_assignment_by_destination_location_at_date()")
+        logger.debug(f"Params passed: {location.__dict__}, {travel_date}, {exclude_assignment.__dict__}")
         with Session(db_engine) as session:
             statement = select(DriverAssignment).where(
                 DriverAssignment.destination_location_latitude == location.latitude,
@@ -140,7 +128,6 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                 )
             driver_assignment_entity = session.exec(statement).first()
         if driver_assignment_entity:
-            self.logger.debug(f"Driver assignment: {driver_assignment_entity}")
             return map_driver_assignment_entity_to_driver_assignment_model(
                 driver_assignment_entity
             )
@@ -148,9 +135,8 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
     def update_driver_assignment(
         self, driver_assignment: DriverAssignmentModel
     ) -> DriverAssignmentModel:
-        self.logger.info(
-            f"Method update_driver_assignment(), Updating driver assignment for driver {driver_assignment.driver_id} and vehicle {driver_assignment.vehicle_id} on {driver_assignment.travel_date}"
-        )
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.update_driver_assignment()")
+        logger.debug(f"Params passed: {driver_assignment.__dict__}")
         with Session(db_engine) as session:
             driver_assignment_entity = session.get(
                 DriverAssignment,
@@ -184,9 +170,6 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                 session.add(driver_assignment_entity)
                 session.commit()
                 session.refresh(driver_assignment_entity)
-                self.logger.debug(
-                    f"Driver assignment updated: {driver_assignment_entity}"
-                )
         if driver_assignment_entity:
             return map_driver_assignment_entity_to_driver_assignment_model(
                 driver_assignment_entity
@@ -195,9 +178,8 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
     def set_driver_assignment_as_inactive(
         self, driver_id: int, vehicle_id: int, travel_date: date
     ) -> None:
-        self.logger.info(
-            f"Method set_driver_assignment_as_inactive(), Setting driver assignment as inactive for driver {driver_id} and vehicle {vehicle_id} on {travel_date}"
-        )
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.set_driver_assignment_as_inactive()")
+        logger.debug(f"Params passed: {driver_id}, {vehicle_id}, {travel_date}")
         with Session(db_engine) as session:
             driver_assignment_entity = session.get(
                 DriverAssignment, (driver_id, vehicle_id, travel_date)
@@ -205,21 +187,16 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
             if driver_assignment_entity:
                 driver_assignment_entity.active = False
                 session.commit()
-                self.logger.debug(
-                    f"Driver assignment set as inactive: {driver_assignment_entity}"
-                )
 
     def get_all_assignments_for_driver(
         self, driver_id: int
     ) -> list[DriverAssignmentModel]:
-        self.logger.info(
-            f"Method get_all_assignments_for_driver(), Getting all assignments for driver {driver_id}"
-        )
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.get_all_assignments_for_driver()")
+        logger.debug(f"Params passed: {driver_id}")
         with Session(db_engine) as session:
             driver_assignment_entities = session.exec(
                 select(DriverAssignment).where(DriverAssignment.driver_id == driver_id)
             ).all()
-            self.logger.debug(f"Driver assignments: {driver_assignment_entities}")
         return [
             map_driver_assignment_entity_to_driver_assignment_model(
                 driver_assignment_entity
@@ -230,16 +207,14 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
     def get_all_assignments_for_vehicle(
         self, vehicle_id: int
     ) -> list[DriverAssignmentModel]:
-        self.logger.info(
-            f"Method get_all_assignments_for_vehicle(), Getting all assignments for vehicle {vehicle_id}"
-        )
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.get_all_assignments_for_vehicle()")
+        logger.debug(f"Params passed: {vehicle_id}")
         with Session(db_engine) as session:
             driver_assignment_entities = session.exec(
                 select(DriverAssignment).where(
                     DriverAssignment.vehicle_id == vehicle_id
                 )
             ).all()
-            self.logger.debug(f"Driver assignments: {driver_assignment_entities}")
         return [
             map_driver_assignment_entity_to_driver_assignment_model(
                 driver_assignment_entity
@@ -248,9 +223,7 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
         ]
 
     def get_number_of_today_assignments(self) -> int:
-        self.logger.info(
-            "Method get_number_of_today_assignments(), Getting number of assignments for today"
-        )
+        logger.debug("Method called: relational_database_driver_assignment_repository_impl.get_number_of_today_assignments()")
         today = date.today()
         formatted_date = today.strftime("%Y-%m-%d")
         with Session(db_engine) as session:
@@ -260,8 +233,5 @@ class RelationalDatabaseDriverAssignmentRepositoryImpl(DriverAssignmentRepositor
                         DriverAssignment.travel_date == formatted_date
                     )
                 ).all()
-            )
-            self.logger.debug(
-                f"Retrieved {number_of_assignments} assignments for today"
             )
         return number_of_assignments

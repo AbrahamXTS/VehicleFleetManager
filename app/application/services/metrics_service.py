@@ -4,7 +4,7 @@ from app.application.repositories.driver_assingment_repository import (
 from app.application.repositories.driver_repository import DriverRepository
 from app.application.repositories.user_repository import UserRepository
 from app.application.repositories.vehicle_repository import VehicleRepository
-import logging
+from loguru import logger
 
 
 class MetricsService:
@@ -19,10 +19,9 @@ class MetricsService:
         self.user_repository = user_repository
         self.driver_repository = driver_repository
         self.driver_assignment_repository = driver_assignment_repository
-        self.logger = logging.getLogger(__name__)
 
     def get_metrics(self):
-        self.logger.info("Method get_metrics(), Getting metrics information")
+        logger.debug("Method called: metrics_service.get_metrics()")
         return {
             "number_of_vehicles": self.vehicle_repository.get_number_of_vehicles(),
             "number_of_users": self.user_repository.get_number_of_users(),

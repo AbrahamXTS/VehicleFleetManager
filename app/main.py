@@ -1,5 +1,4 @@
-import logging
-import yaml
+from loguru import logger
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -44,8 +43,9 @@ app.add_middleware(
     allow_credentials=True,
 )
 
-with open("log_conf.yaml", "rt") as f:
-    config = yaml.safe_load(f.read())
-
-# Configure the logging module with the config file
-logging.config.dictConfig(config)
+logger.remove(0)
+logger.add(
+    "logs/app.log",
+    format="{time} | {level} | {message}",
+    level="DEBUG",
+)

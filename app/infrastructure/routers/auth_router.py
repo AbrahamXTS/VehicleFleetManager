@@ -1,7 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
-import logging
+from loguru import logger
 
 from app.application.services.auth_service import AuthService
 from app.domain.exceptions.conflict_with_existing_resource_exception import (
@@ -29,7 +29,6 @@ from app.infrastructure.security.bcrypt_password_encryptor_impl import (
 from app.infrastructure.security.json_web_token_tools import JsonWebTokenTools
 
 
-logger = logging.getLogger(__name__)
 auth_router = APIRouter()
 auth_service = AuthService(
     invitation_code_repository=RelationalDatabaseInvitationCodeRepositoryImpl(),
@@ -43,47 +42,45 @@ def login_user(
     user_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> AuthResponseDTO:
     try:
-        logger.info("POST /login/")
-        logger.debug(f"{status.HTTP_200_OK}, Request body: {user_data.username}")
+        logger.info("API REQUEST - POST /auth/login/")
+        logger.debug(f"Request body: {user_data.username}")
         user = auth_service.login(email=user_data.username, password=user_data.password)
 
+        logger.success(f"API RESPONSE {status.HTTP_200_OK} - POST /login/")
         return AuthResponseDTO(
             access_token=JsonWebTokenTools.create_access_token(user.email),
             token_type="bearer",
             user=map_user_model_to_user_logged_dto(user),
         )
     except InvalidCredentialsException:
-        logger.warning(
-            f"POST /login/ , Invalid credentials. {status.HTTP_401_UNAUTHORIZED}"
-        )
+        error_detail = "Invalid credentials"
+        logger.warning(f"API RESPONSE {status.HTTP_401_UNAUTHORIZED} - POST /login/ - {error_detail}")
         raise HTTPException(
             headers={"WWW-Authenticate": "Bearer"},
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
+            detail=error_detail,
         )
 
 
 @auth_router.post("/signup", status_code=status.HTTP_201_CREATED)
 def signup_user(candidate: CandidateDTO) -> AuthenticatedUserDTO:
     try:
-        logger.info("POST /signup/")
-        logger.debug(f"Request body: {candidate.email}")
-        return map_user_model_to_user_logged_dto(
-            auth_service.signup(map_candidate_dto_to_candidate_model(candidate))
-        )
+        logger.info("API REQUEST - POST /auth/signup/")
+        logger.debug(f"Request body: {candidate.model_dump()}")
+        user = auth_service.signup(map_candidate_dto_to_candidate_model(candidate))
+        logger.success(f"API RESPONSE {status.HTTP_201_CREATED} - POST /signup/")
+        return map_user_model_to_user_logged_dto(user)
     except InvalidCredentialsException:
-        logger.warning(
-            f"POST /signup/ , Invalid credentials. {status.HTTP_401_UNAUTHORIZED}"
-        )
+        error_detail = "Invalid invitation code"
+        logger.warning(f"API RESPONSE {status.HTTP_401_UNAUTHORIZED} - POST /signup/ - {error_detail}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid invitation code",
+            detail=error_detail,
         )
     except ConflictWithExistingResourceException:
-        logger.warning(
-            f"POST /signup/ , Email address already in use. {status.HTTP_409_CONFLICT}"
-        )
+        error_detail = "This email address is already in use"
+        logger.warning(f"API RESPONSE {status.HTTP_409_CONFLICT} - POST /signup/ - {error_detail}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="This email address is already in use",
+            detail=error_detail,
         )
