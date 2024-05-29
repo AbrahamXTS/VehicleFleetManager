@@ -30,7 +30,7 @@ class DriverService:
 
     def create_driver(self, driver: DriverModel) -> DriverModel:
         logger.debug("Method called: create_driver()")
-        logger.debug(f"Params passed: {driver.model_dump()}")
+        logger.debug(f"Params passed: {driver.__dict__}")
         if self.driver_repository.get_driver_by_curp(driver.curp):
             raise ConflictWithExistingResourceException
 
@@ -38,7 +38,7 @@ class DriverService:
 
     def update_driver(self, driver: DriverModel) -> DriverModel:
         logger.debug("Method called: update_driver()")
-        logger.debug(f"Params passed: {driver.model_dump()}")
+        logger.debug(f"Params passed: {driver.__dict__}")
         if not driver.id or not self.driver_repository.get_driver_by_driver_id(
             driver.id
         ):

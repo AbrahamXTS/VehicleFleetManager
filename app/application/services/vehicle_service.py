@@ -42,7 +42,7 @@ class VehicleService:
 
     def is_vehicle_duplicate(self, vehicle: VehicleModel, id: int | None = None):
         logger.debug("Method called: is_vehicle_duplicate()")
-        logger.debug(f"Params passed: {vehicle.model_dump()} and ID: {id}")
+        logger.debug(f"Params passed: {vehicle.__dict__} and ID: {id}")
         found = self.vehicle_repository.get_vehicle_by_vin(
             vin=vehicle.vin
         ) or self.vehicle_repository.get_vehicle_by_plate(plate=vehicle.plate)
@@ -52,7 +52,7 @@ class VehicleService:
 
     def update_vehicle(self, id: int, vehicle_update: VehicleModel):
         logger.debug("Method called: update_vehicle()")
-        logger.debug(f"Params passed: ID: {id} and {vehicle_update.model_dump()}")
+        logger.debug(f"Params passed: ID: {id} and {vehicle_update.__dict__}")
         if not self.get_vehicle_by_id(id=id):
             raise ResourceNotFoundException
         if self.is_vehicle_duplicate(vehicle=vehicle_update, id=id):
@@ -66,7 +66,7 @@ class VehicleService:
 
     def create_vehicle(self, vehicle: VehicleModel):
         logger.debug("Method called: create_vehicle()")
-        logger.debug(f"Params passed: {vehicle.model_dump()}")
+        logger.debug(f"Params passed: {vehicle.__dict__}")
         vehicle.entry_date = datetime.now(timezone.utc)
         if self.is_vehicle_duplicate(vehicle=vehicle):
             raise ConflictWithExistingResourceException

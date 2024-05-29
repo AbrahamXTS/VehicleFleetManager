@@ -45,7 +45,7 @@ class DriverAssignmentService:
         self, driver_assignment: DriverAssignmentModel
     ) -> DriverAssignmentModel:
         logger.debug("Method called: assign_driver_to_vehicle()")
-        logger.debug(f"Params passed: {driver_assignment.model_dump()}")
+        logger.debug(f"Params passed: {driver_assignment.__dict__}")
         if self.driver_assignment_repository.get_active_driver_assignments_with_driver_id_or_vehicle_id_at_date(
             driver_assignment.driver_id,
             driver_assignment.vehicle_id,
@@ -89,7 +89,7 @@ class DriverAssignmentService:
         self, driver_assignment: DriverAssignmentModel
     ) -> DriverAssignmentModel:
         logger.debug("Method called: update_driver_assignment()")
-        logger.debug(f"Params passed: {driver_assignment.model_dump()}")
+        logger.debug(f"Params passed: {driver_assignment.__dict__}")
         if assignment := self.get_driver_assignment(
             driver_assignment.driver_id,
             driver_assignment.vehicle_id,
