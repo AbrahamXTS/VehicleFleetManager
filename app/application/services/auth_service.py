@@ -1,4 +1,4 @@
-import logging
+from loguru import logger
 
 from app.application.repositories.invitation_code_repository import (
     InvitationCodeRepository,
@@ -25,11 +25,11 @@ class AuthService:
         self.invitation_code_repository = invitation_code_repository
         self.password_encryptor = password_encryptor
         self.user_repository = user_repository
-        self.logger = logging.getLogger(__name__)
 
     def login(self, email: str, password: str) -> UserModel:
         user = self.user_repository.get_user_by_email(email)
-        self.logger.debug(f"Logging in user with data: {email}")
+        logger.debug("Method called: login()")
+        logger.debug(f"Params passed: {email}, {password}")
         if not user or not self.password_encryptor.verify_password_hash(
             password, user.password
         ):
@@ -38,6 +38,8 @@ class AuthService:
         return user
 
     def signup(self, candidate: CandidateModel) -> UserModel:
+        logger.debug("Method called: signup()")
+        logger.debug(f"Params passed: {candidate.model_dump()}")
         invitation_code = (
             self.invitation_code_repository.get_invitation_code_by_code_and_email(
                 code=candidate.invitation_code, email=candidate.email
