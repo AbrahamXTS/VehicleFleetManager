@@ -1,5 +1,9 @@
 pipeline {
     agent any
+
+    environment {
+        PROJECT_NAME='proy-devops-back'
+    }
     stages {
         stage('Copy archive') {
             steps {
@@ -8,12 +12,12 @@ pipeline {
         }
         stage('Stop active containers') {
             steps {
-                sh 'docker compose down'
+                sh 'docker compose -p ${PROJECT_NAME} down'
             }
         }
         stage('Deploy') {
             steps {
-                sh 'docker compose up -d'
+                sh 'docker compose -p ${PROJECT_NAME} up -d'
             }
         }
     }
