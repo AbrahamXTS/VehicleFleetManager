@@ -42,7 +42,7 @@ def login_user(
     user_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> AuthResponseDTO:
     try:
-        logger.info("API REQUEST - POST /login/")
+        logger.info("API REQUEST - POST /auth/login/")
         logger.debug(f"Request body: {user_data.username}")
         user = auth_service.login(email=user_data.username, password=user_data.password)
 
@@ -53,31 +53,34 @@ def login_user(
             user=map_user_model_to_user_logged_dto(user),
         )
     except InvalidCredentialsException:
-        logger.warning(f"API RESPONSE {status.HTTP_401_UNAUTHORIZED} - POST /login/")
+        error_detail = "Invalid credentials"
+        logger.warning(f"API RESPONSE {status.HTTP_401_UNAUTHORIZED} - POST /login/ - {error_detail}")
         raise HTTPException(
             headers={"WWW-Authenticate": "Bearer"},
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid credentials",
+            detail=error_detail,
         )
 
 
 @auth_router.post("/signup", status_code=status.HTTP_201_CREATED)
 def signup_user(candidate: CandidateDTO) -> AuthenticatedUserDTO:
     try:
-        logger.info("API REQUEST - POST /signup/")
+        logger.info("API REQUEST - POST /auth/signup/")
         logger.debug(f"Request body: {candidate.model_dump()}")
         user = auth_service.signup(map_candidate_dto_to_candidate_model(candidate))
         logger.success(f"API RESPONSE {status.HTTP_201_CREATED} - POST /signup/")
         return map_user_model_to_user_logged_dto(user)
     except InvalidCredentialsException:
-        logger.warning(f"API RESPONSE {status.HTTP_401_UNAUTHORIZED} - POST /signup/")
+        error_detail = "Invalid invitation code"
+        logger.warning(f"API RESPONSE {status.HTTP_401_UNAUTHORIZED} - POST /signup/ - {error_detail}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid invitation code",
+            detail=error_detail,
         )
     except ConflictWithExistingResourceException:
-        logger.warning(f"API RESPONSE {status.HTTP_409_CONFLICT} - POST /signup/")
+        error_detail = "This email address is already in use"
+        logger.warning(f"API RESPONSE {status.HTTP_409_CONFLICT} - POST /signup/ - {error_detail}")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="This email address is already in use",
+            detail=error_detail,
         )
