@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    environment {
+        MYSQL_ROOT_PASSWORD = credentials('mysql-root-password')
+        MYSQL_DATABASE = 'proyecto-devops'
+        MYSQL_USER = 'vm-user'
+        MYSQL_PASSWORD = credentials('mysql-password')
+        JWT_SECRET_KEY = credentials('jwt-secret-key')
+        JWT_ALGORITHM = 'HS256'
+        PROJECT_NAME='proy-devops-back'
+    }
+    stages {
+        stage('Environment setup') {
+            steps {
+                script {
+                    sh '''
+                        python3 -m venv venv
+                        source venv/bin/activate
+                        pip install -r requirements.txt
+                        deactivate
+                    '''
+                }
+            }
+        }
+        stage('Create .env file') {
+            steps {
+                script {
+                    sh '''
+                        cat <<EOF > .env
+                        MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+                        MYSQL_DATABASE=${MYSQL_DATABASE}
+                        MYSQL_USER=${MYSQL_USER}
+                        MYSQL_PASSWORD=${MYSQL_PASSWORD}
+                        JWT_SECRET_KEY=${JWT_SECRET_KEY}
+                        JWT_ALGORITHM=${JWT_ALGORITHM}
+                        EOF
+                    '''
+                }
+            }
+        }
+        stage('Lint') {
+            steps {
+                script {
+                    sh '''
+                        source venv/bin/activate
+                        ruff check
+                        deactivate
+                    '''
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'docker compose -p ${PROJECT_NAME} build'
+            }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: '.env', onlyIfSuccessful: true
+            cleanWs()
+        }
+    }
+}

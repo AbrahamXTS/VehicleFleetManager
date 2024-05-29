@@ -1,0 +1,73 @@
+services:
+  db:
+    container_name: ${MYSQL_DATABASE}
+    image: mariadb:11.3-jammy
+    ports:
+      - 3306:3306
+    volumes:
+      - vm-db-volume:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    restart: always
+
+  api-service:
+    depends_on:
+      - db
+    container_name: vehicle-management-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./logs:/business-fleet-manager/logs
+      - ./pictures:/business-fleet-manager/pictures
+    environment:
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@${MYSQL_DATABASE}:3306/${MYSQL_DATABASE}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: ${JWT_ALGORITHM}
+    restart: always
+
+  elastic:
+    container_name: elasticsearch
+    image: elasticsearch:8.13.4
+    ports:
+      - 9200:9200
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "xpack.security.enabled=false"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    restart: always
+
+  logstash:
+    depends_on:
+      - api-service
+      - elastic
+    container_name: logstash
+    image: logstash:8.13.4
+    volumes:
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - ./logs:/usr/share/logstash/logs
+      - ./sincedb:/usr/share/logstash/sincedb
+    command: logstash -f /usr/share/logstash/pipeline/logstash.conf
+    restart: always
+    
+  kibana:
+    depends_on:
+      - elastic
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    ports:
+      - 5601:5601
+    restart: always
+
+volumes:
+  vm-db-volume:
+    external: false
+  esdata:
+    external: false
