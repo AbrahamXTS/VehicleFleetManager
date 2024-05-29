@@ -1,7 +1,11 @@
+from contextlib import asynccontextmanager
 from loguru import logger
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.infrastructure.configs.initial_data import add_default_user
+from app.infrastructure.configs.sql_database import create_db_and_tables
 
 from .infrastructure.docs.openapi_tags import openapi_tags
 from .infrastructure.routers.auth_router import auth_router
@@ -11,7 +15,16 @@ from .infrastructure.routers.invitation_codes_router import invitation_code_rout
 from .infrastructure.routers.management_router import management_router
 from .infrastructure.routers.vehicle_router import vehicle_router
 
+
 load_dotenv()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Application startup")
+    create_db_and_tables()
+    add_default_user()
+    yield
+    print("Application shutdown")
 
 app = FastAPI(
     title="Vehicle Management API",
@@ -22,6 +35,7 @@ app = FastAPI(
         "email": "spaghetti-scripters@gmail.com"
     },
     openapi_tags=openapi_tags,
+    lifespan=lifespan,
 )
 
 app.include_router(auth_router, prefix="/auth", tags=["Authorization"])
